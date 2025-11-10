@@ -1,10 +1,10 @@
-import { NextAuthOptions } from "next-auth";
-import CredentialsProvider from "next-auth/providers/credentials";
-import axios from "axios";
-import { mockLogin } from "./auth-mock";
+import { NextAuthOptions } from "next-auth"
+import CredentialsProvider from "next-auth/providers/credentials"
+import axios from "axios"
+import { mockLogin } from "./auth-mock"
 
 // Verifica se está em modo local (mock) ou API
-const USE_MOCK_AUTH = process.env.USE_MOCK_AUTH === "true";
+const USE_MOCK_AUTH = process.env.USE_MOCK_AUTH === "true"
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -14,30 +14,30 @@ export const authOptions: NextAuthOptions = {
         email: {
           label: "Email",
           type: "email",
-          placeholder: "seu@email.com"
+          placeholder: "seu@email.com",
         },
         password: {
           label: "Senha",
-          type: "password"
+          type: "password",
         },
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
-          throw new Error("Email e senha são obrigatórios");
+          throw new Error("Email e senha são obrigatórios")
         }
 
         try {
           // MODO LOCAL (MOCK) - Para desenvolvimento e testes
           if (USE_MOCK_AUTH) {
-            console.log("🔧 Usando autenticação MOCK (local)");
+            console.log("🔧 Usando autenticação MOCK (local)")
 
             const user = await mockLogin(
               credentials.email,
               credentials.password
-            );
+            )
 
             if (!user) {
-              throw new Error("Credenciais inválidas");
+              throw new Error("Credenciais inválidas")
             }
 
             return {
@@ -45,11 +45,11 @@ export const authOptions: NextAuthOptions = {
               email: user.email,
               name: user.name,
               role: user.role,
-            };
+            }
           }
 
           // MODO API - Para produção
-          console.log("🌐 Usando autenticação via API");
+          console.log("🌐 Usando autenticação via API")
 
           const response = await axios.post(
             `${process.env.NEXT_PUBLIC_API_URL}/auth/login`,
@@ -57,9 +57,9 @@ export const authOptions: NextAuthOptions = {
               email: credentials.email,
               password: credentials.password,
             }
-          );
+          )
 
-          const user = response.data;
+          const user = response.data
 
           // Se a autenticação for bem-sucedida, retorne o usuário
           if (user && user.id) {
@@ -68,20 +68,21 @@ export const authOptions: NextAuthOptions = {
               email: user.email,
               name: user.name,
               role: user.role,
-            };
+            }
           }
 
           // Se falhar, retorne null
-          return null;
+          return null
         } catch (error) {
-          console.error("Erro na autenticação:", error);
+          console.error("Erro na autenticação:", error)
 
           if (axios.isAxiosError(error)) {
-            const message = error.response?.data?.message || "Credenciais inválidas";
-            throw new Error(message);
+            const message =
+              error.response?.data?.message || "Credenciais inválidas"
+            throw new Error(message)
           }
 
-          throw new Error("Credenciais inválidas");
+          throw new Error("Credenciais inválidas")
         }
       },
     }),
@@ -90,22 +91,22 @@ export const authOptions: NextAuthOptions = {
     async jwt({ token, user }) {
       // Persist the user info in the token
       if (user) {
-        token.id = user.id;
-        token.email = user.email;
-        token.name = user.name;
-        token.role = user.role;
+        token.id = user.id
+        token.email = user.email
+        token.name = user.name
+        token.role = user.role
       }
-      return token;
+      return token
     },
     async session({ session, token }) {
       // Send properties to the client
       if (token) {
-        session.user.id = token.id;
-        session.user.email = token.email;
-        session.user.name = token.name;
-        session.user.role = token.role;
+        session.user.id = token.id
+        session.user.email = token.email
+        session.user.name = token.name
+        session.user.role = token.role
       }
-      return session;
+      return session
     },
   },
   pages: {
@@ -117,4 +118,4 @@ export const authOptions: NextAuthOptions = {
     maxAge: 30 * 24 * 60 * 60, // 30 dias
   },
   secret: process.env.NEXTAUTH_SECRET,
-};
+}
