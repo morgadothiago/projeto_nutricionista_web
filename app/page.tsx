@@ -24,11 +24,14 @@ export default function Home() {
         <div className="flex-1 flex flex-col items-center justify-center w-full">
           {/* Texto principal */}
           <div className="text-center mb-10">
-            <h1 className="text-[28px] font-bold text-[#2E3A59] leading-snug mb-4 px-2">
+            <h1 className="text-[24px] font-bold text-[#2E3A59] leading-snug mb-4 px-2">
               Cuidar da sua alimentação pode ser mais leve.
             </h1>
-            <p className="text-[15px] text-[#4B5563] leading-relaxed px-4">
-              Aqui, o plano se adapta a você e não o contrário.
+            <p className="text-[15px] text-[#4B5563] leading-relaxed px-4  font-medium">
+              <span className="text-[20px]">
+                Aqui, o plano se adapta a você
+              </span>{" "}
+              <span className="text-[20px]"> e não o contrário.</span>
             </p>
           </div>
 
