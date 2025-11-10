@@ -1,206 +1,324 @@
-"use client";
+"use client"
 
-import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
-import { FormEvent, useState } from "react";
+import { signIn } from "next-auth/react"
+import { useRouter } from "next/navigation"
+import { FormEvent, useState } from "react"
+import Link from "next/link"
+import { Eye, EyeOff, Mail, Lock, Loader2 } from "lucide-react"
+import { toast } from "sonner"
 
-const IS_MOCK_MODE = process.env.NEXT_PUBLIC_USE_MOCK_AUTH === "true";
+const IS_MOCK_MODE = process.env.NEXT_PUBLIC_USE_MOCK_AUTH === "true"
 
 export default function LoginPage() {
-  const router = useRouter();
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [showTestUsers, setShowTestUsers] = useState(false);
-
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setError("");
-    setLoading(true);
-
-    const formData = new FormData(e.currentTarget);
-    const email = formData.get("email") as string;
-    const password = formData.get("password") as string;
-
-    try {
-      const result = await signIn("credentials", {
-        email,
-        password,
-        redirect: false,
-      });
-
-      if (result?.error) {
-        setError("Credenciais inválidas. Tente novamente.");
-        return;
-      }
-
-      router.push("/dashboard");
-      router.refresh();
-    } catch (error) {
-      console.error("Erro no login:", error);
-      setError("Ocorreu um erro. Tente novamente.");
-    } finally {
-      setLoading(false);
-    }
-  };
+  const router = useRouter()
+  const [loading, setLoading] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
+  const [showTestUsers, setShowTestUsers] = useState(false)
 
   const testUsers = [
-    { email: "nutricionista@nutri.com", password: "nutri123", role: "Nutricionista", name: "Dra. Ana Silva" },
-    { email: "nutri2@nutri.com", password: "nutri123", role: "Nutricionista", name: "Dr. Carlos Santos" },
-    { email: "paciente@email.com", password: "paciente123", role: "Paciente", name: "João Oliveira" },
-    { email: "maria@email.com", password: "paciente123", role: "Paciente", name: "Maria Costa" },
-  ];
+    {
+      email: "nutricionista@nutri.com",
+      password: "nutri123",
+      role: "Nutricionista",
+      name: "Dra. Ana Silva",
+    },
+    {
+      email: "nutri2@nutri.com",
+      password: "nutri123",
+      role: "Nutricionista",
+      name: "Dr. Carlos Santos",
+    },
+    {
+      email: "paciente@email.com",
+      password: "paciente123",
+      role: "Paciente",
+      name: "João Oliveira",
+    },
+    {
+      email: "maria@email.com",
+      password: "paciente123",
+      role: "Paciente",
+      name: "Maria Costa",
+    },
+  ]
 
-  const quickLogin = async (email: string, password: string) => {
-    setError("");
-    setLoading(true);
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    setLoading(true)
+
+    const formData = new FormData(e.currentTarget)
+    const email = formData.get("email") as string
+    const password = formData.get("password") as string
 
     try {
       const result = await signIn("credentials", {
         email,
         password,
         redirect: false,
-      });
+      })
 
       if (result?.error) {
-        setError("Credenciais inválidas. Tente novamente.");
-        return;
+        toast.error("Erro ao fazer login", {
+          description: "Email ou senha incorretos. Tente novamente.",
+        })
+        return
       }
 
-      router.push("/dashboard");
-      router.refresh();
+      toast.success("Login realizado com sucesso!", {
+        description: "Redirecionando para o dashboard...",
+      })
+
+      setTimeout(() => {
+        router.push("/dashboard")
+        router.refresh()
+      }, 500)
     } catch (error) {
-      console.error("Erro no login:", error);
-      setError("Ocorreu um erro. Tente novamente.");
+      console.error("Erro no login:", error)
+      toast.error("Erro inesperado", {
+        description: "Ocorreu um erro ao tentar fazer login.",
+      })
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
+
+  const quickLogin = async (email: string, password: string) => {
+    setLoading(true)
+
+    try {
+      const result = await signIn("credentials", {
+        email,
+        password,
+        redirect: false,
+      })
+
+      if (result?.error) {
+        toast.error("Erro ao fazer login rápido")
+        return
+      }
+
+      toast.success("Login realizado com sucesso!")
+
+      setTimeout(() => {
+        router.push("/dashboard")
+        router.refresh()
+      }, 500)
+    } catch (error) {
+      console.error("Erro no login:", error)
+      toast.error("Erro ao fazer login rápido")
+    } finally {
+      setLoading(false)
+    }
+  }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
-      <div className="max-w-md w-full space-y-6">
-        <div className="bg-white p-8 rounded-lg shadow-md">
-          <div>
-            <h2 className="text-center text-3xl font-extrabold text-gray-900">
-              Faça login na sua conta
-            </h2>
-            {IS_MOCK_MODE && (
-              <div className="mt-2 text-center">
-                <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                  🔧 Modo de Teste (Mock)
-                </span>
+    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-teal-50 flex items-center justify-center p-4">
+      <div className="w-full max-w-6xl grid lg:grid-cols-2 gap-8 items-center">
+        {/* Left Side - Branding */}
+        <div className="hidden lg:flex flex-col justify-center space-y-6 px-12">
+          <div className="space-y-4">
+            <div className="inline-flex items-center space-x-3">
+              <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl flex items-center justify-center shadow-lg">
+                <span className="text-white font-bold text-2xl">N</span>
               </div>
-            )}
-          </div>
-          <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          <div className="rounded-md shadow-sm space-y-4">
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                Email
-              </label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                autoComplete="email"
-                required
-                className="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-                placeholder="seu@email.com"
-              />
+              <span className="text-3xl font-bold text-gray-900">NutriWeb</span>
             </div>
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                Senha
-              </label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                autoComplete="current-password"
-                required
-                className="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-                placeholder="••••••••"
-              />
-            </div>
+            <h1 className="text-4xl font-bold text-gray-900 leading-tight">
+              Transforme vidas através da nutrição
+            </h1>
+            <p className="text-lg text-gray-600">
+              Plataforma completa para gestão nutricional profissional
+            </p>
           </div>
 
-          {error && (
-            <div className="rounded-md bg-red-50 p-4">
-              <div className="text-sm text-red-700">{error}</div>
+          <div className="space-y-4 pt-8">
+            <div className="flex items-start space-x-3">
+              <div className="w-8 h-8 bg-emerald-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                <span className="text-emerald-600 text-lg">✓</span>
+              </div>
+              <div>
+                <h3 className="font-semibold text-gray-900">Gestão Completa</h3>
+                <p className="text-sm text-gray-600">
+                  Gerencie pacientes, consultas e planos alimentares
+                </p>
+              </div>
             </div>
-          )}
-
-          <div>
-            <button
-              type="submit"
-              disabled={loading}
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {loading ? "Entrando..." : "Entrar"}
-            </button>
+            <div className="flex items-start space-x-3">
+              <div className="w-8 h-8 bg-emerald-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                <span className="text-emerald-600 text-lg">✓</span>
+              </div>
+              <div>
+                <h3 className="font-semibold text-gray-900">
+                  Acompanhamento em Tempo Real
+                </h3>
+                <p className="text-sm text-gray-600">
+                  Monitore a evolução dos seus pacientes
+                </p>
+              </div>
+            </div>
+            <div className="flex items-start space-x-3">
+              <div className="w-8 h-8 bg-emerald-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                <span className="text-emerald-600 text-lg">✓</span>
+              </div>
+              <div>
+                <h3 className="font-semibold text-gray-900">
+                  Dashboard Intuitivo
+                </h3>
+                <p className="text-sm text-gray-600">
+                  Interface moderna e fácil de usar
+                </p>
+              </div>
+            </div>
           </div>
-        </form>
         </div>
 
-        {/* Usuários de Teste - Apenas em modo mock */}
-        {IS_MOCK_MODE && (
-          <div className="bg-white p-6 rounded-lg shadow-md">
-            <button
-              onClick={() => setShowTestUsers(!showTestUsers)}
-              className="w-full flex items-center justify-between text-left"
-            >
-              <h3 className="text-lg font-semibold text-gray-900">
-                👥 Usuários de Teste
-              </h3>
-              <span className="text-gray-500">
-                {showTestUsers ? "▼" : "▶"}
-              </span>
-            </button>
+        {/* Right Side - Login Form */}
+        <div className="w-full max-w-md mx-auto space-y-6">
+          <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-8">
+            {/* Mobile Logo */}
+            <div className="lg:hidden flex justify-center mb-6">
+              <div className="inline-flex items-center space-x-3">
+                <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl flex items-center justify-center shadow-lg">
+                  <span className="text-white font-bold text-xl">N</span>
+                </div>
+                <span className="text-2xl font-bold text-gray-900">
+                  NutriWeb
+                </span>
+              </div>
+            </div>
 
-            {showTestUsers && (
-              <div className="mt-4 space-y-3">
-                <p className="text-sm text-gray-600 mb-3">
-                  Clique em um usuário para fazer login automaticamente:
-                </p>
-                {testUsers.map((user, index) => (
-                  <div
-                    key={index}
-                    className="border border-gray-200 rounded-lg p-4 hover:border-emerald-300 hover:bg-emerald-50 transition-colors"
-                  >
-                    <div className="flex justify-between items-start gap-3">
-                      <div className="flex-1 text-sm">
-                        <p className="font-bold text-gray-900 mb-1">{user.name}</p>
-                        <p className="text-gray-700 mb-1">{user.email}</p>
-                        <p className="text-gray-500 mb-2">Senha: {user.password}</p>
-                        <span className={`inline-block px-2 py-1 text-xs font-medium rounded-full ${
-                          user.role === "Nutricionista"
-                            ? "bg-emerald-100 text-emerald-700"
-                            : "bg-blue-100 text-blue-700"
-                        }`}>
-                          {user.role}
-                        </span>
-                      </div>
-                      <button
-                        onClick={() => quickLogin(user.email, user.password)}
-                        disabled={loading}
-                        className="px-3 py-2 text-xs font-medium text-white bg-gradient-to-r from-emerald-500 to-teal-600 rounded-lg hover:from-emerald-600 hover:to-teal-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-md hover:shadow-lg flex-shrink-0"
-                      >
-                        Login Rápido
-                      </button>
-                    </div>
+            <div className="text-center mb-8">
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                Bem-vindo de volta!
+              </h2>
+              <p className="text-gray-600">
+                Entre com suas credenciais para continuar
+              </p>
+              {IS_MOCK_MODE && (
+                <div className="mt-3 inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-700">
+                  🔧 Modo de Teste Ativo
+                </div>
+              )}
+            </div>
+
+            <form onSubmit={handleSubmit} className="space-y-4">
+              {/* Email Input */}
+              <div>
+                <label
+                  htmlFor="email"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
+                  Email
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <Mail className="h-5 w-5 text-gray-400" />
                   </div>
-                ))}
-                <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
-                  <p className="text-xs text-yellow-800">
-                    💡 <strong>Dica:</strong> Esta seção só aparece em modo de teste.
-                    Para usar sua API real, altere <code className="bg-yellow-100 px-1 py-0.5 rounded">USE_MOCK_AUTH=false</code> no arquivo .env
-                  </p>
+                  <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    autoComplete="email"
+                    required
+                    className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
+                    placeholder="seu@email.com"
+                  />
                 </div>
               </div>
-            )}
+
+              {/* Password Input */}
+              <div>
+                <label
+                  htmlFor="password"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
+                  Senha
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <Lock className="h-5 w-5 text-gray-400" />
+                  </div>
+                  <input
+                    id="password"
+                    name="password"
+                    type={showPassword ? "text" : "password"}
+                    autoComplete="current-password"
+                    required
+                    className="block w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
+                    placeholder="••••••••"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                  >
+                    {showPassword ? (
+                      <EyeOff className="h-5 w-5 text-gray-400 hover:text-gray-600" />
+                    ) : (
+                      <Eye className="h-5 w-5 text-gray-400 hover:text-gray-600" />
+                    )}
+                  </button>
+                </div>
+              </div>
+
+              {/* Remember & Forgot */}
+              <div className="flex items-center justify-between text-sm">
+                <label className="flex items-center">
+                  <input
+                    type="checkbox"
+                    className="w-4 h-4 text-emerald-600 border-gray-300 rounded focus:ring-emerald-500"
+                  />
+                  <span className="ml-2 text-gray-600">Lembrar-me</span>
+                </label>
+                <Link
+                  href="/esqueci-senha"
+                  className="text-emerald-600 hover:text-emerald-700 font-medium"
+                >
+                  Esqueceu a senha?
+                </Link>
+              </div>
+
+              {/* Submit Button */}
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full flex items-center justify-center px-4 py-3 bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-lg font-medium hover:from-emerald-600 hover:to-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-xl"
+              >
+                {loading ? (
+                  <>
+                    <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                    Entrando...
+                  </>
+                ) : (
+                  "Entrar"
+                )}
+              </button>
+            </form>
+
+            {/* Divider */}
+            <div className="relative my-6">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-gray-300"></div>
+              </div>
+              <div className="relative flex justify-center text-sm">
+                <span className="px-2 bg-white text-gray-500">
+                  Não tem uma conta?
+                </span>
+              </div>
+            </div>
+
+            {/* Sign Up Link */}
+            <Link
+              href="/cadastro"
+              className="w-full flex items-center justify-center px-4 py-3 border-2 border-gray-300 text-gray-700 rounded-lg font-medium hover:border-emerald-500 hover:text-emerald-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-all duration-200"
+            >
+              Criar conta gratuita
+            </Link>
           </div>
-        )}
+
+          {/* Test Users - Only in Mock Mode */}
+        </div>
       </div>
     </div>
-  );
+  )
 }
