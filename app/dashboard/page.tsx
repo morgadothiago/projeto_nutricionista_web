@@ -1,10 +1,10 @@
-"use client";
+"use client"
 
-import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
-import { DashboardLayout } from "@/components/dashboard/dashboard-layout";
-import { StatCard } from "@/components/dashboard/stat-card";
-import { ActivityCard } from "@/components/dashboard/activity-card";
+import { useSession } from "next-auth/react"
+import { useRouter } from "next/navigation"
+import { DashboardLayout } from "@/app/components/dashboard/dashboard-layout"
+import { StatCard } from "@/app/components/dashboard/stat-card"
+import { ActivityCard } from "@/app/components/dashboard/activity-card"
 import {
   Users,
   Calendar,
@@ -14,11 +14,11 @@ import {
   Clock,
   Heart,
   Target,
-} from "lucide-react";
+} from "lucide-react"
 
 export default function DashboardPage() {
-  const { data: session, status } = useSession();
-  const router = useRouter();
+  const { data: session, status } = useSession()
+  const router = useRouter()
 
   if (status === "loading") {
     return (
@@ -28,16 +28,16 @@ export default function DashboardPage() {
           <p className="text-gray-600">Carregando...</p>
         </div>
       </div>
-    );
+    )
   }
 
   if (!session) {
-    router.push("/login");
-    return null;
+    router.push("/login")
+    return null
   }
 
-  const userRole = session.user?.role || "paciente";
-  const isNutricionista = userRole === "nutricionista";
+  const userRole = session.user?.role || "paciente"
+  const isNutricionista = userRole === "nutricionista"
 
   // Conteúdo específico para Nutricionista
   const nutricionistaStats = [
@@ -72,7 +72,7 @@ export default function DashboardPage() {
       iconColor: "text-green-600",
       iconBgColor: "bg-green-100",
     },
-  ];
+  ]
 
   const nutricionistaActivities = [
     {
@@ -102,7 +102,7 @@ export default function DashboardPage() {
       iconColor: "text-purple-600",
       iconBgColor: "bg-purple-100",
     },
-  ];
+  ]
 
   // Conteúdo específico para Paciente
   const pacienteStats = [
@@ -134,7 +134,7 @@ export default function DashboardPage() {
       iconColor: "text-red-600",
       iconBgColor: "bg-red-100",
     },
-  ];
+  ]
 
   const pacienteActivities = [
     {
@@ -164,10 +164,12 @@ export default function DashboardPage() {
       iconColor: "text-purple-600",
       iconBgColor: "bg-purple-100",
     },
-  ];
+  ]
 
-  const stats = isNutricionista ? nutricionistaStats : pacienteStats;
-  const activities = isNutricionista ? nutricionistaActivities : pacienteActivities;
+  const stats = isNutricionista ? nutricionistaStats : pacienteStats
+  const activities = isNutricionista
+    ? nutricionistaActivities
+    : pacienteActivities
 
   return (
     <DashboardLayout userName={session.user?.name || ""} userRole={userRole}>
@@ -250,5 +252,5 @@ export default function DashboardPage() {
         </p>
       </div>
     </DashboardLayout>
-  );
+  )
 }

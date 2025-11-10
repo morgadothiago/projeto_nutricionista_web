@@ -1,22 +1,22 @@
-"use client";
+"use client"
 
-import { useAuth } from "@/lib/hooks/use-auth";
-import { RoleGuard } from "@/components/auth";
-import { signOut } from "next-auth/react";
+import { useAuth } from "@/lib/hooks/use-auth"
+import { RoleGuard } from "@/app/components/auth"
+import { signOut } from "next-auth/react"
 
 /**
  * Página de exemplos de uso do NextAuth
  * Esta página demonstra diferentes formas de usar a autenticação
  */
 export default function ExamplesPage() {
-  const { user, isAuthenticated, isLoading } = useAuth();
+  const { user, isAuthenticated, isLoading } = useAuth()
 
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-pulse text-lg">Carregando...</div>
       </div>
-    );
+    )
   }
 
   return (
@@ -27,13 +27,16 @@ export default function ExamplesPage() {
             Exemplos de Autenticação
           </h1>
           <p className="text-gray-600">
-            Esta página demonstra diferentes formas de usar o NextAuth no seu projeto.
+            Esta página demonstra diferentes formas de usar o NextAuth no seu
+            projeto.
           </p>
         </div>
 
         {/* Exemplo 1: Status de Autenticação */}
         <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-          <h2 className="text-xl font-semibold mb-3">1. Status de Autenticação</h2>
+          <h2 className="text-xl font-semibold mb-3">
+            1. Status de Autenticação
+          </h2>
           <div className="space-y-2">
             <p className="text-gray-700">
               <strong>Status:</strong>{" "}
@@ -120,7 +123,9 @@ export default function ExamplesPage() {
               allowedRoles={["admin", "user"]}
               fallback={
                 <div className="bg-gray-50 border border-gray-200 rounded p-4">
-                  <p className="text-gray-600">🔒 Conteúdo para usuários registrados</p>
+                  <p className="text-gray-600">
+                    🔒 Conteúdo para usuários registrados
+                  </p>
                 </div>
               }
             >
@@ -156,5 +161,5 @@ export default function MyComponent() {
         </div>
       </div>
     </div>
-  );
+  )
 }
