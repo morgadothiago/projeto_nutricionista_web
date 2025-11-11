@@ -1,8 +1,10 @@
 "use client";
 
 import { Menu, Bell, Search, LogOut, User } from "lucide-react";
-import { signOut } from "next-auth/react";
+import { useAuthContext } from "@/contexts/auth-context";
 import { useState } from "react";
+import { toast } from "sonner";
+import { Input } from "@/components/ui/input";
 
 interface HeaderProps {
   userName: string;
@@ -12,6 +14,7 @@ interface HeaderProps {
 
 export function DashboardHeader({ userName, userRole, onMenuClick }: HeaderProps) {
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const { logout, isLoading } = useAuthContext();
 
   const getInitials = (name: string) => {
     return name
@@ -42,12 +45,12 @@ export function DashboardHeader({ userName, userRole, onMenuClick }: HeaderProps
           </button>
 
           {/* Search Bar - Desktop */}
-          <div className="hidden md:flex items-center bg-gray-100 rounded-lg px-3 py-2 w-64 lg:w-96">
-            <Search className="w-5 h-5 text-gray-400 mr-2" />
-            <input
+          <div className="hidden md:flex items-center relative w-64 lg:w-96">
+            <Search className="absolute left-3 w-5 h-5 text-gray-400" />
+            <Input
               type="text"
               placeholder="Buscar..."
-              className="bg-transparent border-none outline-none text-sm text-gray-700 w-full placeholder:text-gray-400"
+              className="pl-10 bg-gray-100 border-0 focus-visible:ring-1 focus-visible:ring-emerald-500"
             />
           </div>
         </div>
@@ -113,11 +116,24 @@ export function DashboardHeader({ userName, userRole, onMenuClick }: HeaderProps
                       <span>Meu Perfil</span>
                     </button>
                     <button
-                      onClick={() => signOut({ callbackUrl: "/login" })}
-                      className="w-full flex items-center space-x-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
+                      onClick={async () => {
+                        try {
+                          setShowUserMenu(false);
+                          toast.loading("Saindo...");
+                          await logout();
+                          toast.dismiss();
+                          toast.success("Logout realizado com sucesso!");
+                        } catch (error) {
+                          toast.dismiss();
+                          toast.error("Erro ao fazer logout");
+                          console.error("Erro no logout:", error);
+                        }
+                      }}
+                      disabled={isLoading}
+                      className="w-full flex items-center space-x-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       <LogOut className="w-4 h-4" />
-                      <span>Sair</span>
+                      <span>{isLoading ? "Saindo..." : "Sair"}</span>
                     </button>
                   </div>
                 </div>

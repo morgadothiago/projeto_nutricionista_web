@@ -4,6 +4,7 @@ import { FormEvent, useState } from "react";
 import Link from "next/link";
 import { Mail, ArrowLeft, Loader2, CheckCircle } from "lucide-react";
 import { toast } from "sonner";
+import { FormInput } from "@/components/form";
 
 export default function EsqueciSenhaPage() {
   const [loading, setLoading] = useState(false);
@@ -70,28 +71,17 @@ export default function EsqueciSenhaPage() {
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-6">
-                <div>
-                  <label
-                    htmlFor="email"
-                    className="block text-sm font-medium text-gray-700 mb-2"
-                  >
-                    Email
-                  </label>
-                  <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <Mail className="h-5 w-5 text-gray-400" />
-                    </div>
-                    <input
-                      id="email"
-                      name="email"
-                      type="email"
-                      autoComplete="email"
-                      required
-                      className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
-                      placeholder="seu@email.com"
-                    />
-                  </div>
-                </div>
+                <FormInput
+                  id="email"
+                  name="email"
+                  type="email"
+                  label="Email"
+                  autoComplete="email"
+                  required
+                  leftIcon={<Mail className="h-5 w-5" />}
+                  placeholder="seu@email.com"
+                  className="py-3 rounded-lg"
+                />
 
                 <button
                   type="submit"

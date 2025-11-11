@@ -1,5 +1,6 @@
 "use client"
 
+import { useEffect } from "react"
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import { DashboardLayout } from "@/app/components/dashboard/dashboard-layout"
@@ -20,6 +21,13 @@ export default function DashboardPage() {
   const { data: session, status } = useSession()
   const router = useRouter()
 
+  // Redireciona se não estiver autenticado (dentro de useEffect para evitar erro de render)
+  useEffect(() => {
+    if (status !== "loading" && !session) {
+      router.push("/login")
+    }
+  }, [session, status, router])
+
   if (status === "loading") {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -32,7 +40,6 @@ export default function DashboardPage() {
   }
 
   if (!session) {
-    router.push("/login")
     return null
   }
 

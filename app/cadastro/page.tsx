@@ -4,15 +4,14 @@ import { FormEvent, useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import Image from "next/image"
-import { Mail, Lock, User, Eye, EyeOff, Loader2, Phone } from "lucide-react"
+import { Mail, Lock, Loader2 } from "lucide-react"
 import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
+import { FormInput } from "@/components/form"
 
 export default function CadastroPage() {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
-  const [showPassword, setShowPassword] = useState(false)
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [userType, setUserType] = useState<"nutricionista" | "paciente">(
     "paciente"
   )
@@ -94,95 +93,46 @@ export default function CadastroPage() {
 
           <form onSubmit={handleSubmit} className="space-y-3">
             {/* Email */}
-            <div>
-              <label
-                htmlFor="email"
-                className="block text-xs font-medium text-[#2E3A59] mb-1.5"
-              >
-                Email
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Mail className="h-4 w-4 text-gray-400" />
-                </div>
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  required
-                  className="block w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#2DD49F] focus:border-[#2DD49F] transition-all duration-300 text-sm"
-                  placeholder="seu@email.com"
-                />
-              </div>
-            </div>
+            <FormInput
+              id="email"
+              name="email"
+              type="email"
+              label="Email"
+              required
+              leftIcon={<Mail className="h-4 w-4" />}
+              placeholder="seu@email.com"
+              className="py-2.5 rounded-xl text-sm bg-white"
+              labelClassName="text-xs text-[#2E3A59]"
+            />
 
             {/* Senha */}
-            <div>
-              <label
-                htmlFor="password"
-                className="block text-xs font-medium text-[#2E3A59] mb-1.5"
-              >
-                Senha
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Lock className="h-4 w-4 text-gray-400" />
-                </div>
-                <input
-                  id="password"
-                  name="password"
-                  type={showPassword ? "text" : "password"}
-                  required
-                  className="block w-full pl-10 pr-10 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#2DD49F] focus:border-[#2DD49F] transition-all duration-300 text-sm"
-                  placeholder="Mínimo 6 caracteres"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                >
-                  {showPassword ? (
-                    <EyeOff className="h-4 w-4 text-gray-400 hover:text-gray-600" />
-                  ) : (
-                    <Eye className="h-4 w-4 text-gray-400 hover:text-gray-600" />
-                  )}
-                </button>
-              </div>
-            </div>
+            <FormInput
+              id="password"
+              name="password"
+              type="password"
+              label="Senha"
+              required
+              leftIcon={<Lock className="h-4 w-4" />}
+              placeholder="Mínimo 6 caracteres"
+              showPasswordToggle
+              className="py-2.5 rounded-xl text-sm bg-white"
+              labelClassName="text-xs text-[#2E3A59]"
+              helperText="A senha deve ter no mínimo 6 caracteres"
+            />
 
             {/* Confirmar Senha */}
-            <div>
-              <label
-                htmlFor="confirmPassword"
-                className="block text-xs font-medium text-[#2E3A59] mb-1.5"
-              >
-                Confirmar senha
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Lock className="h-4 w-4 text-gray-400" />
-                </div>
-                <input
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  type={showConfirmPassword ? "text" : "password"}
-                  required
-                  className="block w-full pl-10 pr-10 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#2DD49F] focus:border-[#2DD49F] transition-all duration-300 text-sm"
-                  placeholder="Digite a senha novamente"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                >
-                  {showConfirmPassword ? (
-                    <EyeOff className="h-4 w-4 text-gray-400 hover:text-gray-600" />
-                  ) : (
-                    <Eye className="h-4 w-4 text-gray-400 hover:text-gray-600" />
-                  )}
-                </button>
-              </div>
-            </div>
+            <FormInput
+              id="confirmPassword"
+              name="confirmPassword"
+              type="password"
+              label="Confirmar senha"
+              required
+              leftIcon={<Lock className="h-4 w-4" />}
+              placeholder="Digite a senha novamente"
+              showPasswordToggle
+              className="py-2.5 rounded-xl text-sm bg-white"
+              labelClassName="text-xs text-[#2E3A59]"
+            />
 
             {/* Terms */}
             <div className="flex items-start pt-1">

@@ -1,7 +1,7 @@
 import { NextAuthOptions } from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials"
 import axios from "axios"
-import { mockLogin } from "./auth-mock"
+import { mockLogin } from "@/mocks"
 
 // Verifica se está em modo local (mock) ou API
 const USE_MOCK_AUTH = process.env.USE_MOCK_AUTH === "true"
@@ -91,19 +91,19 @@ export const authOptions: NextAuthOptions = {
     async jwt({ token, user }) {
       // Persist the user info in the token
       if (user) {
-        token.id = user.id
-        token.email = user.email
-        token.name = user.name
+        token.id = user.id as string
+        token.email = user.email as string
+        token.name = user.name as string
         token.role = user.role
       }
       return token
     },
     async session({ session, token }) {
       // Send properties to the client
-      if (token) {
-        session.user.id = token.id
-        session.user.email = token.email
-        session.user.name = token.name
+      if (token && session.user) {
+        session.user.id = token.id as string
+        session.user.email = token.email as string
+        session.user.name = token.name as string
         session.user.role = token.role
       }
       return session

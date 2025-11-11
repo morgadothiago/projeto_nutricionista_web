@@ -1,8 +1,9 @@
 import { withAuth } from "next-auth/middleware";
 import { NextResponse } from "next/server";
+import type { NextRequestWithAuth } from "next-auth/middleware";
 
 export default withAuth(
-  function middleware(req) {
+  function middleware(req: NextRequestWithAuth) {
     // Você pode adicionar lógica adicional aqui
     // Por exemplo, verificar roles de usuário
     return NextResponse.next();

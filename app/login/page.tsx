@@ -4,43 +4,18 @@ import { signIn } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import { FormEvent, useState } from "react"
 import Link from "next/link"
-import { Eye, EyeOff, Mail, Lock, Loader2 } from "lucide-react"
+import { Mail, Lock, Loader2 } from "lucide-react"
 import { toast } from "sonner"
+import Image from "next/image"
+import { FormInput } from "@/components/form"
+import { TEST_USERS_DISPLAY } from "@/mocks"
 
 const IS_MOCK_MODE = process.env.NEXT_PUBLIC_USE_MOCK_AUTH === "true"
 
 export default function LoginPage() {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
-  const [showPassword, setShowPassword] = useState(false)
   const [showTestUsers, setShowTestUsers] = useState(false)
-
-  const testUsers = [
-    {
-      email: "nutricionista@nutri.com",
-      password: "nutri123",
-      role: "Nutricionista",
-      name: "Dra. Ana Silva",
-    },
-    {
-      email: "nutri2@nutri.com",
-      password: "nutri123",
-      role: "Nutricionista",
-      name: "Dr. Carlos Santos",
-    },
-    {
-      email: "paciente@email.com",
-      password: "paciente123",
-      role: "Paciente",
-      name: "João Oliveira",
-    },
-    {
-      email: "maria@email.com",
-      password: "paciente123",
-      role: "Paciente",
-      name: "Maria Costa",
-    },
-  ]
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -126,7 +101,9 @@ export default function LoginPage() {
               <div className="w-12 h-12 bg-gradient-to-br from-[#2DD49F] to-[#24b685] rounded-2xl flex items-center justify-center shadow-lg">
                 <span className="text-white font-bold text-2xl">N</span>
               </div>
-              <span className="text-3xl font-bold text-[#2E3A59]">Zap Nutre</span>
+              <span className="text-3xl font-bold text-[#2E3A59]">
+                Zap Nutre
+              </span>
             </div>
             <h1 className="text-4xl font-bold text-[#2E3A59] leading-tight">
               Transforme vidas através da{" "}
@@ -157,7 +134,9 @@ export default function LoginPage() {
                 </svg>
               </div>
               <div>
-                <h3 className="font-semibold text-[#2E3A59]">Gestão Completa</h3>
+                <h3 className="font-semibold text-[#2E3A59]">
+                  Gestão Completa
+                </h3>
                 <p className="text-sm text-[#4B5563]">
                   Gerencie pacientes, consultas e planos alimentares
                 </p>
@@ -220,14 +199,16 @@ export default function LoginPage() {
         <div className="w-full max-w-md mx-auto space-y-6">
           <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/50 p-8">
             {/* Mobile Logo */}
-            <div className="lg:hidden flex justify-center mb-6">
-              <div className="inline-flex items-center space-x-3">
-                <div className="w-10 h-10 bg-gradient-to-br from-[#2DD49F] to-[#24b685] rounded-xl flex items-center justify-center shadow-lg">
-                  <span className="text-white font-bold text-xl">N</span>
-                </div>
-                <span className="text-2xl font-bold text-[#2E3A59]">
-                  Zap Nutre
-                </span>
+            <div className="lg:hidden flex justify-center mb-6 space-y-2">
+              <div className="inline-flex items-center space-x-3 flex-col items-center justify-center">
+                <Image
+                  src="/Logo.svg"
+                  alt="Zap Nutre Logo"
+                  width={30}
+                  height={30}
+                  className="w-30 h-30"
+                  priority
+                />
               </div>
             </div>
 
@@ -247,63 +228,31 @@ export default function LoginPage() {
 
             <form onSubmit={handleSubmit} className="space-y-4">
               {/* Email Input */}
-              <div>
-                <label
-                  htmlFor="email"
-                  className="block text-sm font-medium text-gray-700 mb-2"
-                >
-                  Email
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Mail className="h-5 w-5 text-gray-400" />
-                  </div>
-                  <input
-                    id="email"
-                    name="email"
-                    type="email"
-                    autoComplete="email"
-                    required
-                    className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#2DD49F] focus:border-[#2DD49F] transition-all duration-300"
-                    placeholder="seu@email.com"
-                  />
-                </div>
-              </div>
+              <FormInput
+                id="email"
+                name="email"
+                type="email"
+                label="Email"
+                autoComplete="email"
+                required
+                leftIcon={<Mail className="h-5 w-5" />}
+                placeholder="seu@email.com"
+                className="py-3 rounded-xl"
+              />
 
               {/* Password Input */}
-              <div>
-                <label
-                  htmlFor="password"
-                  className="block text-sm font-medium text-gray-700 mb-2"
-                >
-                  Senha
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Lock className="h-5 w-5 text-gray-400" />
-                  </div>
-                  <input
-                    id="password"
-                    name="password"
-                    type={showPassword ? "text" : "password"}
-                    autoComplete="current-password"
-                    required
-                    className="block w-full pl-10 pr-10 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#2DD49F] focus:border-[#2DD49F] transition-all duration-300"
-                    placeholder="••••••••"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                  >
-                    {showPassword ? (
-                      <EyeOff className="h-5 w-5 text-gray-400 hover:text-gray-600" />
-                    ) : (
-                      <Eye className="h-5 w-5 text-gray-400 hover:text-gray-600" />
-                    )}
-                  </button>
-                </div>
-              </div>
+              <FormInput
+                id="password"
+                name="password"
+                type="password"
+                label="Senha"
+                autoComplete="current-password"
+                required
+                leftIcon={<Lock className="h-5 w-5" />}
+                placeholder="••••••••"
+                showPasswordToggle
+                className="py-3 rounded-xl"
+              />
 
               {/* Remember & Forgot */}
               <div className="flex items-center justify-between text-sm">

@@ -1,15 +1,15 @@
 "use client"
 
-import { useAuth } from "@/lib/hooks/use-auth"
+import { useAuthContext } from "@/contexts/auth-context"
 import { RoleGuard } from "@/app/components/auth"
-import { signOut } from "next-auth/react"
+import { toast } from "sonner"
 
 /**
  * Página de exemplos de uso do NextAuth
  * Esta página demonstra diferentes formas de usar a autenticação
  */
 export default function ExamplesPage() {
-  const { user, isAuthenticated, isLoading } = useAuth()
+  const { user, isAuthenticated, isLoading, logout } = useAuthContext()
 
   if (isLoading) {
     return (
@@ -82,8 +82,18 @@ export default function ExamplesPage() {
                 ✅ Este conteúdo só é visível para usuários autenticados!
               </p>
               <button
-                onClick={() => signOut({ callbackUrl: "/login" })}
-                className="mt-3 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+                onClick={async () => {
+                  try {
+                    toast.loading("Saindo...");
+                    await logout();
+                    toast.dismiss();
+                    toast.success("Logout realizado com sucesso!");
+                  } catch (error) {
+                    toast.dismiss();
+                    toast.error("Erro ao fazer logout");
+                  }
+                }}
+                className="mt-3 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
               >
                 Fazer Logout
               </button>
@@ -142,10 +152,10 @@ export default function ExamplesPage() {
         <div className="bg-white rounded-lg shadow-md p-6">
           <h2 className="text-xl font-semibold mb-3">4. Exemplo de Código</h2>
           <pre className="bg-gray-900 text-gray-100 p-4 rounded overflow-x-auto text-sm">
-            {`import { useAuth } from "@/lib/hooks/use-auth";
+            {`import { useAuthContext } from "@/contexts/auth-context";
 
 export default function MyComponent() {
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated, logout } = useAuthContext();
 
   if (!isAuthenticated) {
     return <div>Faça login</div>;

@@ -143,6 +143,8 @@ export const MENU_CONFIG: MenuSection[] = [
 export function getMenuForRole(userRole: string): MenuSection[] {
   return MENU_CONFIG.map((section) => ({
     ...section,
-    items: section.items.filter((item) => item.roles.includes(userRole)),
+    items: section.items.filter((item) =>
+      item.roles.includes(userRole as "nutricionista" | "paciente")
+    ),
   })).filter((section) => section.items.length > 0);
 }

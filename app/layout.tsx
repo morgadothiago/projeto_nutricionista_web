@@ -2,6 +2,7 @@ import type { Metadata } from "next"
 import { Poppins } from "next/font/google"
 import "./globals.css"
 import { SessionProvider } from "@/app/components/providers/session-provider"
+import { AuthProvider } from "@/contexts/auth-context"
 import { Toaster } from "sonner"
 
 const poppins = Poppins({
@@ -27,8 +28,10 @@ export default function RootLayout({
         className={`${poppins.variable} font-poppins antialiased bg-[#F0FFF4] scroll-smooth`}
       >
         <SessionProvider>
-          {children}
-          <Toaster position="top-right" richColors closeButton />
+          <AuthProvider>
+            {children}
+            <Toaster position="top-right" richColors closeButton />
+          </AuthProvider>
         </SessionProvider>
       </body>
     </html>
