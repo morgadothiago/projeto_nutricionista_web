@@ -1,4 +1,4 @@
-import { UserRole } from "./dashboard"
+import { UserRole } from "./NewAccounts"
 
 /**
  * Interface para os dados do formulário de cadastro
@@ -9,6 +9,10 @@ export interface RegisterFormData {
   email: string
   password: string
   confirmPassword: string
+  role?: UserRole
+  whatsappNumber?: string
+  crn?: string
+  especialidade?: string
 }
 
 /**
@@ -27,9 +31,14 @@ export interface RegisterFormErrors {
  * Interface para o payload de cadastro enviado à API
  */
 export interface RegisterPayload {
+  name: string
+  phone: string
   email: string
   password: string
   role?: UserRole
+  whatsappNumber?: string
+  crn?: string
+  especialidade?: string
 }
 
 /**
@@ -52,5 +61,3 @@ export interface RegisterFormState {
   isLoading: boolean
   isSubmitted: boolean
 }
-
-export default RegisterFormData

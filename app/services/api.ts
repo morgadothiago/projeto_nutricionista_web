@@ -1,9 +1,8 @@
-import RegisterFormData from "@/types/register"
-import { DoctorRegisterPayload } from "@/types"
+import { DoctorRegisterPayload, RegisterFormData } from "@/types"
 import Axios from "axios"
 
 export const api = Axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL,
+  baseURL: "http://localhost:3000",
 })
 
 export async function SignIn(login: { email: string; password: string }) {
@@ -14,9 +13,11 @@ export async function SignIn(login: { email: string; password: string }) {
 }
 
 export async function Register(register: RegisterFormData) {
-  await api.post("/auth/sign-up", {
+  await api.post("/auth/register", {
+    name: register.name,
     email: register.email,
     password: register.password,
+    whatsappNumber: register.phone,
   })
 }
 

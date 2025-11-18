@@ -9,8 +9,9 @@ import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { FormInput } from "@/components/form"
 import { api, Register } from "../services/api"
-import RegisterFormData, { RegisterFormErrors } from "@/types/register"
-import { UserRole } from "@/types"
+
+import { RegisterFormData, UserRole } from "@/types"
+import { RegisterFormErrors } from "@/types/register"
 
 export default function CadastroPage() {
   const router = useRouter()
@@ -81,12 +82,12 @@ export default function CadastroPage() {
     }
 
     // Validação de telefone
-    const phoneRegex = /^[\d\s\(\)\-\+]+$/
-    if (!data.phone || data.phone.trim().length < 10) {
-      newErrors.phone = "Telefone inválido"
-    } else if (!phoneRegex.test(data.phone)) {
-      newErrors.phone = "Telefone deve conter apenas números"
-    }
+    // const phoneRegex = /^[\d\s\(\)\-\+]+$/
+    // if (!data.phone || data.phone.trim().length < 10) {
+    //   newErrors.phone = "Telefone inválido"
+    // } else if (!phoneRegex.test(data.phone)) {
+    //   newErrors.phone = "Telefone deve conter apenas números"
+    // }
 
     // Validação de email
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -115,7 +116,8 @@ export default function CadastroPage() {
 
     const registerData: RegisterFormData = {
       name: formData.get("name") as string,
-      phone: formData.get("phone") as string,
+      phone: phone,
+      whatsappNumber: formData.get("whatsappNumber") as string,
       email: formData.get("email") as string,
       password: formData.get("password") as string,
       confirmPassword: formData.get("confirmPassword") as string,
@@ -136,22 +138,14 @@ export default function CadastroPage() {
     }
 
     try {
-      const response = await api.post(
-        "/auth/register",
-        {
-          name: registerData.name,
-          phone: registerData.phone,
-          email: registerData.email,
-          password: registerData.password,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      )
+      const response = await api.post("/auth/register", {
+        name: registerData.name,
+        whatsappNumber: registerData.whatsappNumber,
+        email: registerData.email,
+        password: registerData.password,
+      })
 
-      console.log(response.data)
+      console.log(response)
 
       toast.success("Cadastro realizado com sucesso!", {
         description: "Você será redirecionado para o login.",
@@ -226,7 +220,7 @@ export default function CadastroPage() {
             {/* Telefone */}
             <FormInput
               id="phone"
-              name="phone"
+              name="whatsappNumber"
               type="tel"
               label="Telefone"
               required

@@ -1,32 +1,29 @@
-/**
- * Tipos relacionados a cadastro de novas contas
- */
-
-/**
- * Tipos de usuário no sistema
- */
-export type UserRole = "nutricionista" | "paciente"
+import { UserRole } from "./NewAccounts"
 
 /**
  * Interface para os dados do formulário de cadastro
  */
 export interface RegisterFormData {
+  name: string
+  phone: string
   email: string
   password: string
   confirmPassword: string
-  name?: string
-  phone?: string
+  role?: UserRole
+  whatsappNumber?: string
+  crn?: string
+  especialidade?: string
 }
 
 /**
  * Interface para validação do formulário de cadastro
  */
 export interface RegisterFormErrors {
+  name?: string
+  phone?: string
   email?: string
   password?: string
   confirmPassword?: string
-  name?: string
-  phone?: string
   general?: string
 }
 
@@ -34,11 +31,14 @@ export interface RegisterFormErrors {
  * Interface para o payload de cadastro enviado à API
  */
 export interface RegisterPayload {
+  name: string
+  phone: string
   email: string
   password: string
-  name?: string
-  phone?: string
   role?: UserRole
+  whatsappNumber?: string
+  crn?: string
+  especialidade?: string
 }
 
 /**
@@ -48,10 +48,8 @@ export interface RegisterResponse {
   id: string
   email: string
   name?: string
-  phone?: string
   role: UserRole
   message?: string
-  createdAt?: string
 }
 
 /**
