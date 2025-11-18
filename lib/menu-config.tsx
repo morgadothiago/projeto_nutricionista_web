@@ -11,8 +11,8 @@ import {
   Heart,
   BookOpen,
   PieChart,
-} from "lucide-react";
-import { MenuSection } from "@/types/dashboard";
+} from "lucide-react"
+import type { MenuSection } from "@/types"
 
 export const MENU_CONFIG: MenuSection[] = [
   {
@@ -135,7 +135,7 @@ export const MENU_CONFIG: MenuSection[] = [
       },
     ],
   },
-];
+]
 
 /**
  * Filtra os itens do menu baseado na role do usuário
@@ -146,5 +146,5 @@ export function getMenuForRole(userRole: string): MenuSection[] {
     items: section.items.filter((item) =>
       item.roles.includes(userRole as "nutricionista" | "paciente")
     ),
-  })).filter((section) => section.items.length > 0);
+  })).filter((section) => section.items.length > 0)
 }

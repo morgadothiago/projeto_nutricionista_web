@@ -1,6 +1,6 @@
 "use client"
 
-import { useAuthContext } from "@/contexts/auth-context"
+import { useAuthContext } from "@/app/contexts/auth-context"
 import { RoleGuard } from "@/app/components/auth"
 import { toast } from "sonner"
 
@@ -84,13 +84,13 @@ export default function ExamplesPage() {
               <button
                 onClick={async () => {
                   try {
-                    toast.loading("Saindo...");
-                    await logout();
-                    toast.dismiss();
-                    toast.success("Logout realizado com sucesso!");
+                    toast.loading("Saindo...")
+                    await logout()
+                    toast.dismiss()
+                    toast.success("Logout realizado com sucesso!")
                   } catch (error) {
-                    toast.dismiss();
-                    toast.error("Erro ao fazer logout");
+                    toast.dismiss()
+                    toast.error("Erro ao fazer logout")
                   }
                 }}
                 className="mt-3 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors"

@@ -2,7 +2,7 @@ import type { Metadata } from "next"
 import { Poppins } from "next/font/google"
 import "./globals.css"
 import { SessionProvider } from "@/app/components/providers/session-provider"
-import { AuthProvider } from "@/contexts/auth-context"
+import { AuthProvider } from "@/app/contexts/auth-context"
 import { Toaster } from "sonner"
 
 const poppins = Poppins({
@@ -14,7 +14,8 @@ const poppins = Poppins({
 
 export const metadata: Metadata = {
   title: "Zap Nutre - Nutrição Personalizada",
-  description: "Cuidar da sua alimentação pode ser mais leve. Planos nutricionais personalizados que se adaptam a você.",
+  description:
+    "Cuidar da sua alimentação pode ser mais leve. Planos nutricionais personalizados que se adaptam a você.",
 }
 
 export default function RootLayout({
@@ -26,6 +27,7 @@ export default function RootLayout({
     <html lang="pt-BR">
       <body
         className={`${poppins.variable} font-poppins antialiased bg-[#F0FFF4] scroll-smooth`}
+        suppressHydrationWarning={true}
       >
         <SessionProvider>
           <AuthProvider>

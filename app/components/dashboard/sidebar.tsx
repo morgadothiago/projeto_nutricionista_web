@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { X, ChevronRight } from "lucide-react";
 import { getMenuForRole } from "@/lib/menu-config";
 import { cn } from "@/lib/utils";
+import type { MenuItem } from "@/types";
 
 interface SidebarProps {
   userRole: string;
@@ -61,7 +62,7 @@ export function Sidebar({ userRole, isOpen, onClose }: SidebarProps) {
                 </h3>
               )}
               <div className="space-y-1">
-                {section.items.map((item) => {
+                {section.items.map((item: MenuItem) => {
                   const isActive = pathname === item.href;
                   const Icon = item.icon;
 

@@ -4,10 +4,32 @@
  */
 
 // Re-exporta tipos do dashboard
-export type { MenuItem, MenuSection, UserRole } from "./dashboard";
-import type { UserRole } from "./dashboard";
+export type { MenuItem, MenuSection } from "./dashboard";
+
+// Re-exporta tipos de cadastro (NewAccounts)
+export type {
+  UserRole,
+  RegisterFormData,
+  RegisterFormErrors,
+  RegisterPayload,
+  RegisterResponse,
+  RegisterFormState,
+} from "./NewAccounts";
+
+// Re-exporta tipos de login
+export type { default as ILogin, LoginResponse, LoginError } from "./login";
+
+// Re-exporta tipos de cadastro de doctor/nutricionista
+export type {
+  DoctorRegisterFormData,
+  DoctorRegisterFormErrors,
+  DoctorRegisterPayload,
+  DoctorRegisterResponse,
+} from "./doctorRegister";
 
 // Tipos de usuário
+import type { UserRole } from "./NewAccounts";
+
 export interface User {
   id: string;
   email: string;
@@ -31,16 +53,6 @@ export interface LoginFormData {
   email: string;
   password: string;
   remember?: boolean;
-}
-
-export interface RegisterFormData {
-  name: string;
-  email: string;
-  phone: string;
-  password: string;
-  confirmPassword: string;
-  userType: UserRole;
-  terms: boolean;
 }
 
 // Tipos de componentes

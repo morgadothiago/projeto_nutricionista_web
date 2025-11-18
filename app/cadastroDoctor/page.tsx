@@ -4,20 +4,27 @@ import { FormEvent, useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import Image from "next/image"
-import { Mail, Lock, Loader2, User, Phone } from "lucide-react"
+import {
+  Mail,
+  Lock,
+  Loader2,
+  User,
+  Phone,
+  FileText,
+  Briefcase,
+} from "lucide-react"
 import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { FormInput } from "@/components/form"
-import { api, Register } from "../services/api"
-import RegisterFormData, { RegisterFormErrors } from "@/types/register"
-import { UserRole } from "@/types"
+import { api } from "../services/api"
+import { DoctorRegisterFormData, DoctorRegisterFormErrors } from "@/types"
 
-export default function CadastroPage() {
+export default function CadastroDoctorPage() {
   const router = useRouter()
   const [loading, setLoading] = useState<boolean>(false)
-  const [userType, setUserType] = useState<UserRole>("paciente")
-  const [errors, setErrors] = useState<RegisterFormErrors>({})
+  const [errors, setErrors] = useState<DoctorRegisterFormErrors>({})
   const [phone, setPhone] = useState<string>("")
+  const [crn, setCrn] = useState<string>("")
   const [password, setPassword] = useState<string>("")
   const [confirmPassword, setConfirmPassword] = useState<string>("")
   const [passwordError, setPasswordError] = useState<string>("")
@@ -41,9 +48,28 @@ export default function CadastroPage() {
     }
   }
 
+  const formatCRN = (value: string): string => {
+    // Remove tudo que não é número ou letra
+    const cleaned = value.replace(/[^0-9A-Za-z]/g, "").toUpperCase()
+
+    // Formato: CRN-X 00000
+    if (cleaned.length <= 4) {
+      return cleaned
+    } else if (cleaned.length <= 9) {
+      return `${cleaned.slice(0, 4)}-${cleaned.slice(4)}`
+    } else {
+      return `${cleaned.slice(0, 4)}-${cleaned.slice(4, 9)}`
+    }
+  }
+
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const formatted = formatPhone(e.target.value)
     setPhone(formatted)
+  }
+
+  const handleCRNChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formatted = formatCRN(e.target.value)
+    setCrn(formatted)
   }
 
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -72,12 +98,20 @@ export default function CadastroPage() {
     }
   }
 
-  const validateForm = (data: RegisterFormData): RegisterFormErrors => {
-    const newErrors: RegisterFormErrors = {}
+  const validateForm = (
+    data: DoctorRegisterFormData
+  ): DoctorRegisterFormErrors => {
+    const newErrors: DoctorRegisterFormErrors = {}
 
     // Validação de nome
     if (!data.name || data.name.trim().length < 2) {
       newErrors.name = "Nome deve ter no mínimo 2 caracteres"
+    }
+
+    // Validação de email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(data.email)) {
+      newErrors.email = "Email inválido"
     }
 
     // Validação de telefone
@@ -88,10 +122,14 @@ export default function CadastroPage() {
       newErrors.phone = "Telefone deve conter apenas números"
     }
 
-    // Validação de email
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    if (!emailRegex.test(data.email)) {
-      newErrors.email = "Email inválido"
+    // Validação de CRN
+    if (!data.crn || data.crn.trim().length < 5) {
+      newErrors.crn = "CRN inválido (formato: CRN-X 00000)"
+    }
+
+    // Validação de especialidade
+    if (!data.especialidade || data.especialidade.trim().length < 3) {
+      newErrors.especialidade = "Especialidade deve ter no mínimo 3 caracteres"
     }
 
     // Validação de senha
@@ -103,6 +141,7 @@ export default function CadastroPage() {
     if (data.password !== data.confirmPassword) {
       newErrors.confirmPassword = "As senhas não coincidem"
     }
+
     return newErrors
   }
 
@@ -113,10 +152,12 @@ export default function CadastroPage() {
 
     const formData = new FormData(e.currentTarget)
 
-    const registerData: RegisterFormData = {
+    const registerData: DoctorRegisterFormData = {
       name: formData.get("name") as string,
-      phone: formData.get("phone") as string,
       email: formData.get("email") as string,
+      phone: formData.get("phone") as string,
+      crn: formData.get("crn") as string,
+      especialidade: formData.get("especialidade") as string,
       password: formData.get("password") as string,
       confirmPassword: formData.get("confirmPassword") as string,
     }
@@ -137,12 +178,15 @@ export default function CadastroPage() {
 
     try {
       const response = await api.post(
-        "/auth/register",
+        "/auth/register-doctor",
         {
           name: registerData.name,
-          phone: registerData.phone,
           email: registerData.email,
+          phone: registerData.phone,
+          crn: registerData.crn,
+          especialidade: registerData.especialidade,
           password: registerData.password,
+          role: "nutricionista",
         },
         {
           headers: {
@@ -198,17 +242,16 @@ export default function CadastroPage() {
 
         {/* Título */}
         <div className="text-center mb-8">
-          <h1 className="text-2xl font-bold text-[#2E3A59] mb-2">Bem vindo!</h1>
+          <h1 className="text-2xl font-bold text-[#2E3A59] mb-2">
+            Cadastro de Nutricionista
+          </h1>
           <p className="text-sm text-[#4B5563]">
-            Me fala algumas informações sobre você para que a gente posssa
-            começar!
+            Preencha os dados abaixo para criar sua conta profissional
           </p>
         </div>
 
         {/* Formulário */}
         <div className="w-full">
-          {/* User Type Selection */}
-
           <form onSubmit={handleSubmit} className="space-y-3">
             {/* Nome */}
             <FormInput
@@ -219,6 +262,19 @@ export default function CadastroPage() {
               required
               leftIcon={<User className="h-4 w-4" />}
               placeholder="Digite seu nome completo"
+              className="py-2.5 rounded-xl text-sm bg-white"
+              labelClassName="text-xs text-[#2E3A59]"
+            />
+
+            {/* Email */}
+            <FormInput
+              id="email"
+              name="email"
+              type="email"
+              label="Email"
+              required
+              leftIcon={<Mail className="h-4 w-4" />}
+              placeholder="seu@email.com"
               className="py-2.5 rounded-xl text-sm bg-white"
               labelClassName="text-xs text-[#2E3A59]"
             />
@@ -239,15 +295,32 @@ export default function CadastroPage() {
               maxLength={15}
             />
 
-            {/* Email */}
+            {/* CRN */}
             <FormInput
-              id="email"
-              name="email"
-              type="email"
-              label="Email"
+              id="crn"
+              name="crn"
+              type="text"
+              label="CRN (Conselho Regional de Nutricionistas)"
               required
-              leftIcon={<Mail className="h-4 w-4" />}
-              placeholder="seu@email.com"
+              leftIcon={<FileText className="h-4 w-4" />}
+              placeholder="CRN-3 12345"
+              className="py-2.5 rounded-xl text-sm bg-white"
+              labelClassName="text-xs text-[#2E3A59]"
+              value={crn}
+              onChange={handleCRNChange}
+              maxLength={11}
+              helperText="Formato: CRN-X 00000"
+            />
+
+            {/* Especialidade */}
+            <FormInput
+              id="especialidade"
+              name="especialidade"
+              type="text"
+              label="Especialidade"
+              required
+              leftIcon={<Briefcase className="h-4 w-4" />}
+              placeholder="Ex: Nutrição Clínica, Esportiva, etc."
               className="py-2.5 rounded-xl text-sm bg-white"
               labelClassName="text-xs text-[#2E3A59]"
             />
@@ -328,7 +401,7 @@ export default function CadastroPage() {
                   Criando conta...
                 </>
               ) : (
-                "Criar conta"
+                "Criar conta profissional"
               )}
             </Button>
           </form>
@@ -341,17 +414,6 @@ export default function CadastroPage() {
               className="text-[#2DD49F] hover:text-[#24b685] font-medium transition-colors duration-300 underline"
             >
               Fazer login
-            </Link>
-          </p>
-
-          {/* Link para cadastro de nutricionista */}
-          <p className="mt-2 text-center text-sm text-[#4B5563]">
-            É nutricionista?{" "}
-            <Link
-              href="/cadastroDoctor"
-              className="text-[#2DD49F] hover:text-[#24b685] font-medium transition-colors duration-300 underline"
-            >
-              Cadastre-se aqui
             </Link>
           </p>
         </div>

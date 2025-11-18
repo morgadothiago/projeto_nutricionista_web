@@ -1,20 +1,24 @@
-"use client";
+"use client"
 
-import { Menu, Bell, Search, LogOut, User } from "lucide-react";
-import { useAuthContext } from "@/contexts/auth-context";
-import { useState } from "react";
-import { toast } from "sonner";
-import { Input } from "@/components/ui/input";
+import { Menu, Bell, Search, LogOut, User } from "lucide-react"
+import { useAuthContext } from "@/app/contexts/auth-context"
+import { useState } from "react"
+import { toast } from "sonner"
+import { Input } from "@/components/ui/input"
 
 interface HeaderProps {
-  userName: string;
-  userRole: string;
-  onMenuClick: () => void;
+  userName: string
+  userRole: string
+  onMenuClick: () => void
 }
 
-export function DashboardHeader({ userName, userRole, onMenuClick }: HeaderProps) {
-  const [showUserMenu, setShowUserMenu] = useState(false);
-  const { logout, isLoading } = useAuthContext();
+export function DashboardHeader({
+  userName,
+  userRole,
+  onMenuClick,
+}: HeaderProps) {
+  const [showUserMenu, setShowUserMenu] = useState(false)
+  const { logout, isLoading } = useAuthContext()
 
   const getInitials = (name: string) => {
     return name
@@ -22,14 +26,14 @@ export function DashboardHeader({ userName, userRole, onMenuClick }: HeaderProps
       .map((n) => n[0])
       .join("")
       .toUpperCase()
-      .slice(0, 2);
-  };
+      .slice(0, 2)
+  }
 
   const getRoleBadgeColor = (role: string) => {
     return role === "nutricionista"
       ? "bg-emerald-100 text-emerald-700"
-      : "bg-blue-100 text-blue-700";
-  };
+      : "bg-blue-100 text-blue-700"
+  }
 
   return (
     <header className="sticky top-0 z-30 bg-white border-b border-gray-200 shadow-sm">
@@ -83,7 +87,9 @@ export function DashboardHeader({ userName, userRole, onMenuClick }: HeaderProps
 
               {/* User Info - Desktop */}
               <div className="hidden lg:block text-left">
-                <p className="text-sm font-semibold text-gray-900">{userName}</p>
+                <p className="text-sm font-semibold text-gray-900">
+                  {userName}
+                </p>
                 <p className="text-xs text-gray-500 capitalize">{userRole}</p>
               </div>
             </button>
@@ -98,8 +104,12 @@ export function DashboardHeader({ userName, userRole, onMenuClick }: HeaderProps
                 <div className="absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
                   {/* User Info - Mobile */}
                   <div className="px-4 py-3 border-b border-gray-100">
-                    <p className="text-sm font-semibold text-gray-900">{userName}</p>
-                    <p className="text-xs text-gray-500">{userName.toLowerCase().replace(" ", "")}@email.com</p>
+                    <p className="text-sm font-semibold text-gray-900">
+                      {userName}
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      {userName.toLowerCase().replace(" ", "")}@email.com
+                    </p>
                     <span
                       className={`inline-block mt-2 px-2 py-1 text-xs font-medium rounded-full capitalize ${getRoleBadgeColor(
                         userRole
@@ -118,15 +128,15 @@ export function DashboardHeader({ userName, userRole, onMenuClick }: HeaderProps
                     <button
                       onClick={async () => {
                         try {
-                          setShowUserMenu(false);
-                          toast.loading("Saindo...");
-                          await logout();
-                          toast.dismiss();
-                          toast.success("Logout realizado com sucesso!");
+                          setShowUserMenu(false)
+                          toast.loading("Saindo...")
+                          await logout()
+                          toast.dismiss()
+                          toast.success("Logout realizado com sucesso!")
                         } catch (error) {
-                          toast.dismiss();
-                          toast.error("Erro ao fazer logout");
-                          console.error("Erro no logout:", error);
+                          toast.dismiss()
+                          toast.error("Erro ao fazer logout")
+                          console.error("Erro no logout:", error)
                         }
                       }}
                       disabled={isLoading}
@@ -143,5 +153,5 @@ export function DashboardHeader({ userName, userRole, onMenuClick }: HeaderProps
         </div>
       </div>
     </header>
-  );
+  )
 }

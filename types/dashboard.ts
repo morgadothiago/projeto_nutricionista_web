@@ -1,10 +1,11 @@
 import { LucideIcon } from "lucide-react";
+import { UserRole } from "./NewAccounts";
 
 export interface MenuItem {
   label: string;
   href: string;
   icon: LucideIcon;
-  roles: string[]; // Roles que podem ver este item
+  roles: UserRole[]; // Roles que podem ver este item
   badge?: string | number; // Badge opcional (ex: contador)
 }
 
@@ -13,4 +14,5 @@ export interface MenuSection {
   items: MenuItem[];
 }
 
-export type UserRole = "nutricionista" | "paciente";
+// Re-exporta UserRole para compatibilidade
+export type { UserRole };

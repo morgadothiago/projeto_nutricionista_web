@@ -1,11 +1,11 @@
-"use client";
+"use client"
 
 /**
  * Componente de exemplo mostrando como usar o AuthContext
  * Este arquivo serve como referência para implementação
  */
 
-import { useAuthContext, useRequireAuth } from "@/contexts/auth-context";
+import { useAuthContext, useRequireAuth } from "@/app/contexts/auth-context"
 
 /**
  * Exemplo 1: Usando o contexto básico
@@ -19,7 +19,7 @@ export function BasicAuthExample() {
     isNutricionista,
     isPaciente,
     logout,
-  } = useAuthContext();
+  } = useAuthContext()
 
   if (isLoading) {
     return (
@@ -27,7 +27,7 @@ export function BasicAuthExample() {
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-500" />
         <span className="ml-3 text-gray-600">Carregando...</span>
       </div>
-    );
+    )
   }
 
   if (!isAuthenticated) {
@@ -37,7 +37,7 @@ export function BasicAuthExample() {
           Você precisa estar autenticado para ver este conteúdo
         </p>
       </div>
-    );
+    )
   }
 
   return (
@@ -78,7 +78,7 @@ export function BasicAuthExample() {
         Sair
       </button>
     </div>
-  );
+  )
 }
 
 /**
@@ -86,10 +86,10 @@ export function BasicAuthExample() {
  */
 export function ProtectedExample() {
   // Este hook automaticamente redireciona para /login se não estiver autenticado
-  const { user, isLoading } = useRequireAuth();
+  const { user, isLoading } = useRequireAuth()
 
   if (isLoading) {
-    return <div>Carregando...</div>;
+    return <div>Carregando...</div>
   }
 
   return (
@@ -102,7 +102,7 @@ export function ProtectedExample() {
         autenticados.
       </p>
     </div>
-  );
+  )
 }
 
 /**
@@ -111,10 +111,10 @@ export function ProtectedExample() {
 export function NutricionistaOnlyExample() {
   const { user, isLoading } = useRequireAuth({
     requiredRole: "nutricionista",
-  });
+  })
 
   if (isLoading) {
-    return <div>Verificando permissões...</div>;
+    return <div>Verificando permissões...</div>
   }
 
   return (
@@ -123,18 +123,17 @@ export function NutricionistaOnlyExample() {
         Área do Nutricionista
       </h2>
       <p className="text-purple-700">
-        Olá, Dr(a). {user?.name}! Este conteúdo é exclusivo para
-        nutricionistas.
+        Olá, Dr(a). {user?.name}! Este conteúdo é exclusivo para nutricionistas.
       </p>
     </div>
-  );
+  )
 }
 
 /**
  * Exemplo 4: Renderização condicional baseada em role
  */
 export function ConditionalRenderExample() {
-  const { isNutricionista, isPaciente, hasRole, userName } = useAuthContext();
+  const { isNutricionista, isPaciente, hasRole, userName } = useAuthContext()
 
   return (
     <div className="p-6 bg-gray-50 rounded-lg">
@@ -155,9 +154,7 @@ export function ConditionalRenderExample() {
 
       {isPaciente && (
         <div className="mb-4 p-4 bg-blue-100 rounded-lg">
-          <h3 className="font-semibold text-blue-900">
-            📱 Painel do Paciente
-          </h3>
+          <h3 className="font-semibold text-blue-900">📱 Painel do Paciente</h3>
           <ul className="mt-2 space-y-1 text-blue-700">
             <li>• Ver meu plano alimentar</li>
             <li>• Registrar refeições</li>
@@ -175,14 +172,14 @@ export function ConditionalRenderExample() {
         </div>
       )}
     </div>
-  );
+  )
 }
 
 /**
  * Exemplo 5: Componente com loading state
  */
 export function LoadingStateExample() {
-  const { isLoading, isAuthenticated, user } = useAuthContext();
+  const { isLoading, isAuthenticated, user } = useAuthContext()
 
   // Estado de loading
   if (isLoading) {
@@ -192,7 +189,7 @@ export function LoadingStateExample() {
         <p className="text-gray-600 font-medium">Verificando autenticação...</p>
         <p className="text-gray-400 text-sm mt-1">Aguarde um momento</p>
       </div>
-    );
+    )
   }
 
   // Não autenticado
@@ -204,7 +201,7 @@ export function LoadingStateExample() {
           Você precisa estar autenticado para acessar este conteúdo
         </p>
       </div>
-    );
+    )
   }
 
   // Autenticado - mostra conteúdo
@@ -213,5 +210,5 @@ export function LoadingStateExample() {
       <p className="text-green-800 font-semibold mb-2">✅ Acesso Permitido</p>
       <p className="text-green-600">Bem-vindo, {user?.name}!</p>
     </div>
-  );
+  )
 }

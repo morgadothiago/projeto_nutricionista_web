@@ -50,14 +50,26 @@ export const authOptions: NextAuthOptions = {
 
           // MODO API - Para produção
           console.log("🌐 Usando autenticação via API")
+          console.log("📍 URL:", `${process.env.NEXT_PUBLIC_API_URL}/auth/login`)
+          console.log("📦 Payload:", {
+            email: credentials.email,
+            password: "[OCULTA]",
+          })
 
           const response = await axios.post(
             `${process.env.NEXT_PUBLIC_API_URL}/auth/login`,
             {
               email: credentials.email,
               password: credentials.password,
+            },
+            {
+              headers: {
+                "Content-Type": "application/json",
+              },
             }
           )
+
+          console.log("✅ Resposta da API:", response.data)
 
           const user = response.data
 
@@ -74,11 +86,17 @@ export const authOptions: NextAuthOptions = {
           // Se falhar, retorne null
           return null
         } catch (error) {
-          console.error("Erro na autenticação:", error)
+          console.error("❌ Erro na autenticação:", error)
 
           if (axios.isAxiosError(error)) {
+            console.error("📊 Status:", error.response?.status)
+            console.error("📄 Dados do erro:", error.response?.data)
+            console.error("🔧 Headers:", error.response?.headers)
+
             const message =
-              error.response?.data?.message || "Credenciais inválidas"
+              error.response?.data?.message ||
+              error.response?.data?.error ||
+              "Credenciais inválidas"
             throw new Error(message)
           }
 

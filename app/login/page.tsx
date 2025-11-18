@@ -1,7 +1,5 @@
 "use client"
 
-import { signIn } from "next-auth/react"
-import { useRouter } from "next/navigation"
 import { FormEvent, useState } from "react"
 import Link from "next/link"
 import { Mail, Lock, Loader2 } from "lucide-react"
@@ -9,80 +7,43 @@ import { toast } from "sonner"
 import Image from "next/image"
 import { FormInput } from "@/components/form"
 import { TEST_USERS_DISPLAY } from "@/mocks"
+import { useAuthContext } from "@/app/contexts/auth-context"
 
 const IS_MOCK_MODE = process.env.NEXT_PUBLIC_USE_MOCK_AUTH === "true"
 
 export default function LoginPage() {
-  const router = useRouter()
-  const [loading, setLoading] = useState(false)
+  const { login, isLoading } = useAuthContext()
   const [showTestUsers, setShowTestUsers] = useState(false)
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    setLoading(true)
 
     const formData = new FormData(e.currentTarget)
     const email = formData.get("email") as string
     const password = formData.get("password") as string
 
     try {
-      const result = await signIn("credentials", {
-        email,
-        password,
-        redirect: false,
-      })
-
-      if (result?.error) {
-        toast.error("Erro ao fazer login", {
-          description: "Email ou senha incorretos. Tente novamente.",
-        })
-        return
-      }
+      await login({ email, password })
 
       toast.success("Login realizado com sucesso!", {
         description: "Redirecionando para o dashboard...",
       })
-
-      setTimeout(() => {
-        router.push("/dashboard")
-        router.refresh()
-      }, 500)
     } catch (error) {
       console.error("Erro no login:", error)
-      toast.error("Erro inesperado", {
-        description: "Ocorreu um erro ao tentar fazer login.",
+      toast.error("Erro ao fazer login", {
+        description: "Email ou senha incorretos. Tente novamente.",
       })
-    } finally {
-      setLoading(false)
     }
   }
 
   const quickLogin = async (email: string, password: string) => {
-    setLoading(true)
-
     try {
-      const result = await signIn("credentials", {
-        email,
-        password,
-        redirect: false,
-      })
-
-      if (result?.error) {
-        toast.error("Erro ao fazer login rápido")
-        return
-      }
+      await login({ email, password })
 
       toast.success("Login realizado com sucesso!")
-
-      setTimeout(() => {
-        router.push("/dashboard")
-        router.refresh()
-      }, 500)
     } catch (error) {
       console.error("Erro no login:", error)
       toast.error("Erro ao fazer login rápido")
-    } finally {
-      setLoading(false)
     }
   }
 
@@ -274,10 +235,10 @@ export default function LoginPage() {
               {/* Submit Button */}
               <button
                 type="submit"
-                disabled={loading}
+                disabled={isLoading}
                 className="w-full flex items-center justify-center px-4 py-3 bg-gradient-to-r from-[#2DD49F] to-[#24b685] text-white rounded-xl font-semibold hover:from-[#24b685] hover:to-[#1fa573] hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#2DD49F] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 shadow-lg hover:shadow-xl"
               >
-                {loading ? (
+                {isLoading ? (
                   <>
                     <Loader2 className="w-5 h-5 mr-2 animate-spin" />
                     Entrando...
