@@ -1,4 +1,4 @@
-import { UserRole } from "./NewAccounts"
+import type { UserRole } from "./NewAccounts"
 
 /**
  * Interface para os dados do formulário de cadastro

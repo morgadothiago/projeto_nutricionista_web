@@ -1,4 +1,7 @@
-import { UserRole } from "./NewAccounts"
+/**
+ * Tipo que define os papéis de usuário no sistema
+ */
+export type UserRole = "nutricionista" | "paciente" | "admin";
 
 /**
  * Interface para os dados do formulário de cadastro
