@@ -1,12 +1,18 @@
 import { DoctorRegisterPayload, RegisterFormData } from "@/types"
 import Axios from "axios"
 
+// Usa a variável de ambiente ou fallback para localhost:3000
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000"
+
 export const api = Axios.create({
-  baseURL: "http://localhost:3000",
+  baseURL: API_URL,
 })
 
+// Log para debug
+console.log("🔗 API configurada para:", API_URL)
+
 export async function SignIn(login: { email: string; password: string }) {
-  await api.post("/auth/sign-in", {
+  await api.post("/auth/login", {
     email: login.email,
     password: login.password,
   })

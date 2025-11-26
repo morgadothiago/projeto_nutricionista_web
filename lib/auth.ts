@@ -1,11 +1,8 @@
 import { NextAuthOptions } from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials"
 import axios from "axios"
-import { mockLogin } from "@/mocks"
 import type { UserRole } from "@/types"
-
-// Verifica se está em modo local (mock) ou API
-const USE_MOCK_AUTH = process.env.USE_MOCK_AUTH === "true"
+import { api } from "@/app/services/api"
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -27,20 +24,14 @@ export const authOptions: NextAuthOptions = {
           throw new Error("Email e senha são obrigatórios")
         }
 
-        try {
-          // MODO LOCAL (MOCK) - Para desenvolvimento e testes
-          if (USE_MOCK_AUTH) {
-            console.log("🔧 Usando autenticação MOCK (local)")
+        // MOCK MODE CHECK
+        if (process.env.NEXT_PUBLIC_USE_MOCK_AUTH === "true") {
+          console.log("🔧 MOCK MODE: Tentando login com:", credentials.email)
+          const { mockLogin } = await import("@/mocks/auth")
+          const user = await mockLogin(credentials.email, credentials.password)
 
-            const user = await mockLogin(
-              credentials.email,
-              credentials.password
-            )
-
-            if (!user) {
-              throw new Error("Credenciais inválidas")
-            }
-
+          if (user) {
+            console.log("✅ MOCK MODE: Login realizado com sucesso:", user.name)
             return {
               id: user.id,
               email: user.email,
@@ -49,19 +40,16 @@ export const authOptions: NextAuthOptions = {
             }
           }
 
-          // MODO API - Para produção
-          console.log("🌐 Usando autenticação via API")
-          console.log(
-            "📍 URL:",
-            `${process.env.NEXT_PUBLIC_API_URL}/auth/login`
-          )
-          console.log("📦 Payload:", {
-            email: credentials.email,
-            password: "[OCULTA]",
-          })
+          console.log("❌ MOCK MODE: Credenciais inválidas")
+          return null
+        }
 
-          const response = await axios.post(
-            `${process.env.NEXT_PUBLIC_API_URL}auth/login`,
+        try {
+          console.log("🔐 Tentando login com:", credentials.email)
+          console.log("🔗 URL da API:", api.defaults.baseURL)
+
+          const response = await api.post(
+            "/auth/login",
             {
               email: credentials.email,
               password: credentials.password,
@@ -73,23 +61,37 @@ export const authOptions: NextAuthOptions = {
             }
           )
 
-          console.log("✅ Resposta da API:", response.data)
-
+          console.log("✅ Resposta da API recebida:", response.status)
           const { user } = response.data
 
-          // Se a autenticação for bem-sucedida, retorne o usuário
           if (user && user.id) {
-            // A API retorna roles como string JSON: '["paciente"]' ou '["nutricionista"]'
-            // Precisamos parsear e pegar o primeiro role
             let role: UserRole = "paciente" // default
-            try {
-              const rolesArray = JSON.parse(user.roles)
-              if (rolesArray && rolesArray.length > 0) {
-                role = rolesArray[0] as UserRole
+
+            // Tenta extrair a role de diferentes formatos
+            if (user.roles) {
+              try {
+                // Se roles for uma string JSON, faz parse
+                if (typeof user.roles === 'string') {
+                  const rolesArray = JSON.parse(user.roles)
+                  if (Array.isArray(rolesArray) && rolesArray.length > 0) {
+                    role = rolesArray[0] as UserRole
+                  }
+                }
+                // Se roles já for um array
+                else if (Array.isArray(user.roles) && user.roles.length > 0) {
+                  role = user.roles[0] as UserRole
+                }
+              } catch (e) {
+                console.error("Erro ao parsear roles:", e)
               }
-            } catch (e) {
-              console.error("Erro ao parsear roles:", e)
             }
+
+            // Se houver um campo role direto (fallback)
+            if (user.role) {
+              role = user.role as UserRole
+            }
+
+            console.log("✅ Role extraída no authorize:", role)
 
             return {
               id: String(user.id),
@@ -105,9 +107,20 @@ export const authOptions: NextAuthOptions = {
           console.error("❌ Erro na autenticação:", error)
 
           if (axios.isAxiosError(error)) {
+            // Erro de conexão (backend não está rodando)
+            if (error.code === "ECONNREFUSED" || error.code === "ERR_NETWORK") {
+              console.error("🔴 Backend não está acessível!")
+              console.error("🔗 Tentou conectar em:", api.defaults.baseURL)
+              throw new Error(
+                `Não foi possível conectar ao servidor de autenticação em ${api.defaults.baseURL}. Verifique se o backend está rodando.`
+              )
+            }
+
             console.error("📊 Status:", error.response?.status)
             console.error("📄 Dados do erro:", error.response?.data)
             console.error("🔧 Headers:", error.response?.headers)
+            console.error("🔧 Code:", error.code)
+            console.error("🔧 Message:", error.message)
 
             const message =
               error.response?.data?.message ||
@@ -116,7 +129,7 @@ export const authOptions: NextAuthOptions = {
             throw new Error(message)
           }
 
-          throw new Error("Credenciais inválidas")
+          throw new Error("Erro ao conectar com o servidor de autenticação")
         }
       },
     }),
@@ -129,6 +142,7 @@ export const authOptions: NextAuthOptions = {
         token.email = user.email as string
         token.name = user.name as string
         token.role = user.role
+        console.log("✅ JWT callback - role salva no token:", user.role)
       }
       return token
     },
@@ -139,6 +153,7 @@ export const authOptions: NextAuthOptions = {
         session.user.email = token.email as string
         session.user.name = token.name as string
         session.user.role = token.role
+        console.log("✅ Session callback - role:", token.role)
       }
       return session
     },

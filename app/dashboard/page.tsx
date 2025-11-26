@@ -46,6 +46,10 @@ export default function DashboardPage() {
   const userRole = session.user?.role || "paciente"
   const isNutricionista = userRole === "nutricionista"
 
+  console.log("📊 Dashboard - Sessão completa:", session)
+  console.log("👤 Dashboard - User role:", userRole)
+  console.log("🔍 Dashboard - É nutricionista?", isNutricionista)
+
   // Conteúdo específico para Nutricionista
   const nutricionistaStats = [
     {
@@ -179,16 +183,19 @@ export default function DashboardPage() {
     : pacienteActivities
 
   return (
-    <DashboardLayout userName={session.user?.name || ""} userRole={userRole}>
+    <DashboardLayout userName={session.user?.name || ""} userRole={session.user?.role || ""}>
       {/* Welcome Section */}
       <div className="mb-8">
         <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
           Olá, {session.user?.name}! 👋
         </h1>
-        <p className="text-gray-600">
-          {isNutricionista
+        <p className="text-gray-600 mb-2">
+          {userRole === "nutricionista"
             ? "Aqui está um resumo das suas atividades hoje."
             : "Acompanhe seu progresso e mantenha-se motivado!"}
+        </p>
+        <p className="text-sm text-gray-500">
+          Você está logado como: <span className="font-semibold text-emerald-600">{session.user?.role}</span>
         </p>
       </div>
 
