@@ -2,9 +2,28 @@
 
 import Image from "next/image"
 import Link from "next/link"
+import { useEffect } from "react"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
+import { useAuthContext } from "@/app/contexts/auth-context"
 
 export default function Home() {
+  const router = useRouter()
+  const { isAuthenticated, userRole, isLoading } = useAuthContext()
+
+  // Redireciona se já estiver autenticado
+  useEffect(() => {
+    if (!isLoading && isAuthenticated && userRole) {
+      // Redireciona baseado na role
+      if (userRole === "nutricionista") {
+        router.push("/dashboard/nutricionista")
+      } else if (userRole === "paciente") {
+        router.push("/dashboard/paciente")
+      } else {
+        router.push("/dashboard")
+      }
+    }
+  }, [isLoading, isAuthenticated, userRole, router])
   return (
     <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-[#F0FFF4] via-[#E6F9F0] to-[#D1F5E4]">
       <div className="flex flex-col items-center justify-between min-h-screen mx-auto px-8 py-16 max-w-sm">

@@ -14,15 +14,25 @@ import {
 } from "lucide-react"
 import type { MenuSection } from "@/types"
 
+// Configuração específica para cada role
+const NUTRICIONISTA_DASHBOARD = "/dashboard/nutricionista"
+const PACIENTE_DASHBOARD = "/dashboard/paciente"
+
 export const MENU_CONFIG: MenuSection[] = [
   {
     title: "Principal",
     items: [
       {
         label: "Dashboard",
-        href: "/dashboard",
+        href: NUTRICIONISTA_DASHBOARD,
         icon: LayoutDashboard,
-        roles: ["nutricionista", "paciente"],
+        roles: ["nutricionista"],
+      },
+      {
+        label: "Dashboard",
+        href: PACIENTE_DASHBOARD,
+        icon: LayoutDashboard,
+        roles: ["paciente"],
       },
     ],
   },

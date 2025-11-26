@@ -2,6 +2,7 @@ import { NextAuthOptions } from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials"
 import axios from "axios"
 import { mockLogin } from "@/mocks"
+import type { UserRole } from "@/types"
 
 // Verifica se está em modo local (mock) ou API
 const USE_MOCK_AUTH = process.env.USE_MOCK_AUTH === "true"
@@ -50,14 +51,17 @@ export const authOptions: NextAuthOptions = {
 
           // MODO API - Para produção
           console.log("🌐 Usando autenticação via API")
-          console.log("📍 URL:", `${process.env.NEXT_PUBLIC_API_URL}/auth/login`)
+          console.log(
+            "📍 URL:",
+            `${process.env.NEXT_PUBLIC_API_URL}/auth/login`
+          )
           console.log("📦 Payload:", {
             email: credentials.email,
             password: "[OCULTA]",
           })
 
           const response = await axios.post(
-            `${process.env.NEXT_PUBLIC_API_URL}/auth/login`,
+            `${process.env.NEXT_PUBLIC_API_URL}auth/login`,
             {
               email: credentials.email,
               password: credentials.password,
@@ -71,15 +75,27 @@ export const authOptions: NextAuthOptions = {
 
           console.log("✅ Resposta da API:", response.data)
 
-          const user = response.data
+          const { user } = response.data
 
           // Se a autenticação for bem-sucedida, retorne o usuário
           if (user && user.id) {
+            // A API retorna roles como string JSON: '["paciente"]' ou '["nutricionista"]'
+            // Precisamos parsear e pegar o primeiro role
+            let role: UserRole = "paciente" // default
+            try {
+              const rolesArray = JSON.parse(user.roles)
+              if (rolesArray && rolesArray.length > 0) {
+                role = rolesArray[0] as UserRole
+              }
+            } catch (e) {
+              console.error("Erro ao parsear roles:", e)
+            }
+
             return {
-              id: user.id,
+              id: String(user.id),
               email: user.email,
               name: user.name,
-              role: user.role,
+              role: role,
             }
           }
 

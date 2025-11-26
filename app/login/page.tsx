@@ -1,6 +1,6 @@
 "use client"
 
-import { FormEvent, useState } from "react"
+import { FormEvent, useState, useEffect } from "react"
 import Link from "next/link"
 import { Mail, Lock, Loader2 } from "lucide-react"
 import { toast } from "sonner"
@@ -8,12 +8,28 @@ import Image from "next/image"
 import { FormInput } from "@/components/form"
 import { TEST_USERS_DISPLAY } from "@/mocks"
 import { useAuthContext } from "@/app/contexts/auth-context"
+import { useRouter } from "next/navigation"
 
 const IS_MOCK_MODE = process.env.NEXT_PUBLIC_USE_MOCK_AUTH === "true"
 
 export default function LoginPage() {
-  const { login, isLoading } = useAuthContext()
+  const { login, isLoading, isAuthenticated, userRole } = useAuthContext()
   const [showTestUsers, setShowTestUsers] = useState(false)
+  const router = useRouter()
+
+  // Redireciona se já estiver autenticado
+  useEffect(() => {
+    if (!isLoading && isAuthenticated && userRole) {
+      // Redireciona baseado na role
+      if (userRole === "nutricionista") {
+        router.push("/dashboard/nutricionista")
+      } else if (userRole === "paciente") {
+        router.push("/dashboard/paciente")
+      } else {
+        router.push("/dashboard")
+      }
+    }
+  }, [isLoading, isAuthenticated, userRole, router])
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()

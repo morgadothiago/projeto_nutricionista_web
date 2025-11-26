@@ -1,6 +1,6 @@
 "use client"
 
-import { FormEvent, useState } from "react"
+import { FormEvent, useState, useEffect } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import Image from "next/image"
@@ -9,12 +9,14 @@ import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { FormInput } from "@/components/form"
 import { api, Register } from "../services/api"
+import { useAuthContext } from "@/app/contexts/auth-context"
 
 import { RegisterFormData, UserRole } from "@/types"
 import { RegisterFormErrors } from "@/types/register"
 
 export default function CadastroPage() {
   const router = useRouter()
+  const { isAuthenticated, userRole, isLoading: authLoading } = useAuthContext()
   const [loading, setLoading] = useState<boolean>(false)
   const [userType, setUserType] = useState<UserRole>("paciente")
   const [errors, setErrors] = useState<RegisterFormErrors>({})
@@ -22,6 +24,20 @@ export default function CadastroPage() {
   const [password, setPassword] = useState<string>("")
   const [confirmPassword, setConfirmPassword] = useState<string>("")
   const [passwordError, setPasswordError] = useState<string>("")
+
+  // Redireciona se já estiver autenticado
+  useEffect(() => {
+    if (!authLoading && isAuthenticated && userRole) {
+      // Redireciona baseado na role
+      if (userRole === "nutricionista") {
+        router.push("/dashboard/nutricionista")
+      } else if (userRole === "paciente") {
+        router.push("/dashboard/paciente")
+      } else {
+        router.push("/dashboard")
+      }
+    }
+  }, [authLoading, isAuthenticated, userRole, router])
 
   const formatPhone = (value: string): string => {
     // Remove tudo que não é número
