@@ -82,13 +82,13 @@ export const MENU_CONFIG: MenuSection[] = [
       },
       {
         label: "Evolução",
-        href: "/dashboard/evolucao",
+        href: "/dashboard/paciente/evolucao",
         icon: TrendingUp,
         roles: ["paciente"],
       },
       {
         label: "Diário Alimentar",
-        href: "/dashboard/diario",
+        href: "/dashboard/paciente/diario-alimentar",
         icon: BookOpen,
         roles: ["paciente"],
       },

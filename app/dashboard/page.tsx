@@ -46,10 +46,6 @@ export default function DashboardPage() {
   const userRole = session.user?.role || "paciente"
   const isNutricionista = userRole === "nutricionista"
 
-  console.log("📊 Dashboard - Sessão completa:", session)
-  console.log("👤 Dashboard - User role:", userRole)
-  console.log("🔍 Dashboard - É nutricionista?", isNutricionista)
-
   // Conteúdo específico para Nutricionista
   const nutricionistaStats = [
     {

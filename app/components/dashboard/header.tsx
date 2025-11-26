@@ -136,7 +136,6 @@ export function DashboardHeader({
                         } catch (error) {
                           toast.dismiss()
                           toast.error("Erro ao fazer logout")
-                          console.error("Erro no logout:", error)
                         }
                       }}
                       disabled={isLoading}

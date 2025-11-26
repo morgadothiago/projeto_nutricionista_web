@@ -29,7 +29,6 @@ export default function EsqueciSenhaPage() {
         description: "Verifique sua caixa de entrada.",
       });
     } catch (error) {
-      console.error("Erro ao enviar email:", error);
       toast.error("Erro ao enviar email", {
         description: "Tente novamente mais tarde.",
       });

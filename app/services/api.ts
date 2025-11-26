@@ -8,9 +8,6 @@ export const api = Axios.create({
   baseURL: API_URL,
 })
 
-// Log para debug
-console.log("🔗 API configurada para:", API_URL)
-
 export async function SignIn(login: { email: string; password: string }) {
   await api.post("/auth/login", {
     email: login.email,

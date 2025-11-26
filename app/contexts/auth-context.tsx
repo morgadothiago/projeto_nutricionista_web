@@ -112,7 +112,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
       // O NextAuth irá atualizar automaticamente a sessão
       // Não redirecionamos aqui, deixamos o useEffect abaixo fazer isso
     } catch (error) {
-      console.error("Erro ao fazer login:", error)
       throw error
     } finally {
       setIsLoading(false)
@@ -132,7 +131,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
       router.push("/login")
       router.refresh()
     } catch (error) {
-      console.error("Erro ao fazer logout:", error)
       throw error
     } finally {
       setIsLoading(false)

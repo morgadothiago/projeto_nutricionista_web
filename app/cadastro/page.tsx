@@ -161,8 +161,6 @@ export default function CadastroPage() {
         password: registerData.password,
       })
 
-      console.log(response)
-
       toast.success("Cadastro realizado com sucesso!", {
         description: "Você será redirecionado para o login.",
       })
@@ -171,8 +169,6 @@ export default function CadastroPage() {
         router.push("/login")
       }, 2000)
     } catch (error) {
-      console.error("Erro no cadastro:", error)
-
       const errorMessage =
         error instanceof Error ? error.message : "Erro desconhecido"
 

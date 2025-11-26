@@ -45,7 +45,6 @@ export default function LoginPage() {
         description: "Redirecionando para o dashboard...",
       })
     } catch (error) {
-      console.error("Erro no login:", error)
       toast.error("Erro ao fazer login", {
         description: "Email ou senha incorretos. Tente novamente.",
       })
@@ -58,7 +57,6 @@ export default function LoginPage() {
 
       toast.success("Login realizado com sucesso!")
     } catch (error) {
-      console.error("Erro no login:", error)
       toast.error("Erro ao fazer login rápido")
     }
   }

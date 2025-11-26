@@ -26,12 +26,10 @@ export const authOptions: NextAuthOptions = {
 
         // MOCK MODE CHECK
         if (process.env.NEXT_PUBLIC_USE_MOCK_AUTH === "true") {
-          console.log("🔧 MOCK MODE: Tentando login com:", credentials.email)
           const { mockLogin } = await import("@/mocks/auth")
           const user = await mockLogin(credentials.email, credentials.password)
 
           if (user) {
-            console.log("✅ MOCK MODE: Login realizado com sucesso:", user.name)
             return {
               id: user.id,
               email: user.email,
@@ -40,14 +38,10 @@ export const authOptions: NextAuthOptions = {
             }
           }
 
-          console.log("❌ MOCK MODE: Credenciais inválidas")
           return null
         }
 
         try {
-          console.log("🔐 Tentando login com:", credentials.email)
-          console.log("🔗 URL da API:", api.defaults.baseURL)
-
           const response = await api.post(
             "/auth/login",
             {
@@ -61,7 +55,6 @@ export const authOptions: NextAuthOptions = {
             }
           )
 
-          console.log("✅ Resposta da API recebida:", response.status)
           const { user } = response.data
 
           if (user && user.id) {
@@ -82,7 +75,7 @@ export const authOptions: NextAuthOptions = {
                   role = user.roles[0] as UserRole
                 }
               } catch (e) {
-                console.error("Erro ao parsear roles:", e)
+                // Silently handle parse error
               }
             }
 
@@ -90,8 +83,6 @@ export const authOptions: NextAuthOptions = {
             if (user.role) {
               role = user.role as UserRole
             }
-
-            console.log("✅ Role extraída no authorize:", role)
 
             return {
               id: String(user.id),
@@ -104,23 +95,13 @@ export const authOptions: NextAuthOptions = {
           // Se falhar, retorne null
           return null
         } catch (error) {
-          console.error("❌ Erro na autenticação:", error)
-
           if (axios.isAxiosError(error)) {
             // Erro de conexão (backend não está rodando)
             if (error.code === "ECONNREFUSED" || error.code === "ERR_NETWORK") {
-              console.error("🔴 Backend não está acessível!")
-              console.error("🔗 Tentou conectar em:", api.defaults.baseURL)
               throw new Error(
                 `Não foi possível conectar ao servidor de autenticação em ${api.defaults.baseURL}. Verifique se o backend está rodando.`
               )
             }
-
-            console.error("📊 Status:", error.response?.status)
-            console.error("📄 Dados do erro:", error.response?.data)
-            console.error("🔧 Headers:", error.response?.headers)
-            console.error("🔧 Code:", error.code)
-            console.error("🔧 Message:", error.message)
 
             const message =
               error.response?.data?.message ||
@@ -142,7 +123,6 @@ export const authOptions: NextAuthOptions = {
         token.email = user.email as string
         token.name = user.name as string
         token.role = user.role
-        console.log("✅ JWT callback - role salva no token:", user.role)
       }
       return token
     },
@@ -153,7 +133,6 @@ export const authOptions: NextAuthOptions = {
         session.user.email = token.email as string
         session.user.name = token.name as string
         session.user.role = token.role
-        console.log("✅ Session callback - role:", token.role)
       }
       return session
     },
