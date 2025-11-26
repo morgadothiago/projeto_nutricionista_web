@@ -168,14 +168,27 @@ export default function CadastroPage() {
       setTimeout(() => {
         router.push("/login")
       }, 2000)
-    } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : "Erro desconhecido"
+    } catch (error: any) {
+      let errorMessage = "Erro ao criar conta. Tente novamente mais tarde."
+
+      // Captura mensagens de erro da API
+      if (error.response) {
+        // Tenta extrair a mensagem de erro da resposta
+        errorMessage =
+          error.response.data?.message ||
+          error.response.data?.error ||
+          error.response.data?.errors?.[0]?.message ||
+          `Erro ${error.response.status}: ${error.response.statusText}`
+      } else if (error.request) {
+        errorMessage = "Não foi possível conectar ao servidor. Verifique sua conexão."
+      } else {
+        errorMessage = error.message || errorMessage
+      }
 
       setErrors({ general: errorMessage })
 
       toast.error("Erro ao criar conta", {
-        description: "Tente novamente mais tarde.",
+        description: errorMessage,
       })
     } finally {
       setLoading(false)

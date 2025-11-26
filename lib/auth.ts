@@ -24,23 +24,6 @@ export const authOptions: NextAuthOptions = {
           throw new Error("Email e senha são obrigatórios")
         }
 
-        // MOCK MODE CHECK
-        if (process.env.NEXT_PUBLIC_USE_MOCK_AUTH === "true") {
-          const { mockLogin } = await import("@/mocks/auth")
-          const user = await mockLogin(credentials.email, credentials.password)
-
-          if (user) {
-            return {
-              id: user.id,
-              email: user.email,
-              name: user.name,
-              role: user.role,
-            }
-          }
-
-          return null
-        }
-
         try {
           const response = await api.post(
             "/auth/login",

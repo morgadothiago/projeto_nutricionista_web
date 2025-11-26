@@ -10,13 +10,37 @@ Sistema completo de gestão nutricional com autenticação NextAuth, dashboard r
 - 🎨 **UI/UX moderna** e profissional
 - 📱 **100% responsivo** (mobile, tablet, desktop)
 - 🔄 **Menu dinâmico** baseado em permissões
-- 🧪 **Modo de teste** com usuários mockados
+- 🔌 **Integração completa com API REST**
 
 ---
 
 ## 🚀 Início Rápido
 
-### 1. Instalar Dependências
+### 1. Configurar Variáveis de Ambiente
+
+Copie o arquivo de exemplo e configure as variáveis:
+
+```bash
+cp .env.example .env.local
+```
+
+O projeto possui diferentes arquivos de ambiente:
+- `.env.local` - Desenvolvimento local (usado automaticamente)
+- `.env.production` - Produção (usado no build de produção)
+- `.env` - Configuração base
+- `.env.example` - Template de exemplo
+
+**Desenvolvimento (`.env.local`):**
+```env
+NEXT_PUBLIC_API_URL=http://localhost:3000
+```
+
+**Produção (`.env.production`):**
+```env
+NEXT_PUBLIC_API_URL=https://back-st1k.onrender.com
+```
+
+### 2. Instalar Dependências
 
 ```bash
 npm install
@@ -24,7 +48,7 @@ npm install
 yarn install
 ```
 
-### 2. Iniciar o Servidor
+### 3. Iniciar o Servidor
 
 ```bash
 npm run dev
@@ -32,23 +56,19 @@ npm run dev
 yarn dev
 ```
 
-### 3. Acessar a Aplicação
+### 4. Acessar a Aplicação
 
 ```
-http://localhost:3000
+http://localhost:3001
 ```
 
-### 4. Fazer Login
+### 5. Fazer Login
 
-Acesse `/login` e escolha um usuário de teste:
+Acesse `/login` e use suas credenciais cadastradas na API.
 
-**Nutricionistas:**
-- `nutricionista@nutri.com` / `nutri123`
-- `nutri2@nutri.com` / `nutri123`
-
-**Pacientes:**
-- `paciente@email.com` / `paciente123`
-- `maria@email.com` / `paciente123`
+**Importante:** O projeto agora está configurado para usar apenas a API backend. Certifique-se de que:
+- O backend está rodando em `http://localhost:3000` (desenvolvimento)
+- Ou configure a URL de produção em `.env.production`
 
 ---
 
@@ -121,19 +141,64 @@ nutri_web/
 
 ## 🔐 Sistema de Autenticação
 
-### Modo Atual: Local (Mock)
+### Modo: API REST
 
-O projeto está configurado para usar autenticação local por padrão, perfeito para desenvolvimento!
+O projeto está configurado para usar **exclusivamente a API backend**. Os dados mockados foram removidos.
 
-**Para trocar para API:**
+**Configuração de Desenvolvimento:**
 ```env
-# .env
+# .env.local
 USE_MOCK_AUTH=false
 NEXT_PUBLIC_USE_MOCK_AUTH=false
-NEXT_PUBLIC_API_URL=http://sua-api.com
+NEXT_PUBLIC_API_URL=http://localhost:3000
 ```
 
-Veja [MODO_LOCAL_VS_API.md](./MODO_LOCAL_VS_API.md) para mais detalhes.
+**Configuração de Produção:**
+```env
+# .env.production
+USE_MOCK_AUTH=false
+NEXT_PUBLIC_USE_MOCK_AUTH=false
+NEXT_PUBLIC_API_URL=https://back-st1k.onrender.com
+```
+
+**Endpoints da API:**
+- `POST /auth/login` - Autenticação de usuários
+- `GET /api/pacientes` - Lista de pacientes (nutricionista)
+- `GET /api/consultas` - Consultas
+- E outros endpoints conforme documentação da API
+
+---
+
+## ⚙️ Configuração de Ambiente
+
+O projeto utiliza múltiplos arquivos `.env` para diferentes ambientes:
+
+| Arquivo | Quando é usado | Prioridade |
+|---------|---------------|-----------|
+| `.env.local` | Desenvolvimento local | Alta (sobrescreve outros) |
+| `.env.production` | Build de produção | Média |
+| `.env` | Todos os ambientes | Baixa (base) |
+| `.env.example` | Template/Documentação | N/A (não carregado) |
+
+### URLs Configuradas
+
+**Desenvolvimento:**
+- Frontend: `http://localhost:3001`
+- Backend: `http://localhost:3000`
+
+**Produção:**
+- Backend: `https://back-st1k.onrender.com`
+
+### Trocar entre Ambientes
+
+```bash
+# Desenvolvimento (padrão)
+npm run dev
+
+# Build de produção (usa .env.production)
+npm run build
+npm start
+```
 
 ---
 
@@ -298,8 +363,11 @@ export type UserRole = "nutricionista" | "paciente" | "admin";
 
 ### Erro ao fazer login
 ```bash
-# Verifique se está em modo mock
-USE_MOCK_AUTH=true no .env
+# Verifique se o backend está rodando
+curl http://localhost:3000/health
+
+# Verifique a URL da API no .env
+cat .env.local | grep NEXT_PUBLIC_API_URL
 
 # Reinicie o servidor
 npm run dev

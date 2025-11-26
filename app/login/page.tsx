@@ -1,20 +1,16 @@
 "use client"
 
-import { FormEvent, useState, useEffect } from "react"
+import { FormEvent, useEffect } from "react"
 import Link from "next/link"
 import { Mail, Lock, Loader2 } from "lucide-react"
 import { toast } from "sonner"
 import Image from "next/image"
 import { FormInput } from "@/components/form"
-import { TEST_USERS_DISPLAY } from "@/mocks"
 import { useAuthContext } from "@/app/contexts/auth-context"
 import { useRouter } from "next/navigation"
 
-const IS_MOCK_MODE = process.env.NEXT_PUBLIC_USE_MOCK_AUTH === "true"
-
 export default function LoginPage() {
   const { login, isLoading, isAuthenticated, userRole } = useAuthContext()
-  const [showTestUsers, setShowTestUsers] = useState(false)
   const router = useRouter()
 
   // Redireciona se já estiver autenticado
@@ -51,15 +47,6 @@ export default function LoginPage() {
     }
   }
 
-  const quickLogin = async (email: string, password: string) => {
-    try {
-      await login({ email, password })
-
-      toast.success("Login realizado com sucesso!")
-    } catch (error) {
-      toast.error("Erro ao fazer login rápido")
-    }
-  }
 
   return (
     <div className="relative min-h-screen overflow-hidden flex items-center justify-center p-4">
@@ -194,11 +181,6 @@ export default function LoginPage() {
               <p className="text-[#4B5563]">
                 Entre com suas credenciais para continuar
               </p>
-              {IS_MOCK_MODE && (
-                <div className="mt-3 inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-700">
-                  🔧 Modo de Teste Ativo
-                </div>
-              )}
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -283,8 +265,6 @@ export default function LoginPage() {
               Criar conta gratuita
             </Link>
           </div>
-
-          {/* Test Users - Only in Mock Mode */}
         </div>
       </div>
     </div>
