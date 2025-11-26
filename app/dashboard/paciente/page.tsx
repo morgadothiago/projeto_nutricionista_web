@@ -15,6 +15,7 @@ import {
   Target,
   TrendingUp,
 } from "lucide-react"
+import { ProfileCompletion } from "@/app/components/profile/profile-completion"
 
 export default function PacienteDashboard() {
   const { data: session, status } = useSession()
@@ -121,6 +122,15 @@ export default function PacienteDashboard() {
         <p className="text-gray-600">
           Acompanhe seu progresso e mantenha-se motivado!
         </p>
+      </div>
+
+      {/* Profile Completion */}
+      <div className="mb-8 bg-white rounded-xl border border-gray-200 p-6">
+        <ProfileCompletion
+          percentage={65}
+          label="Complete seu perfil nutricional"
+          size="md"
+        />
       </div>
 
       {/* Stats Grid */}
