@@ -14,16 +14,15 @@ export function ProgressBar({ currentStep, totalSteps, steps }: ProgressBarProps
         {steps.map((step) => (
           <div
             key={step.id}
-            className="flex flex-col items-center flex-1"
+            className="flex flex-col items-center flex-1 "
           >
             <div
-              className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold transition-all duration-300 ${
-                step.id < currentStep
-                  ? "bg-[#2DD49F] text-white"
-                  : step.id === currentStep
+              className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold transition-all duration-300 ${step.id < currentStep
+                ? "bg-[#2DD49F] text-white"
+                : step.id === currentStep
                   ? "bg-[#2DD49F] text-white ring-4 ring-[#2DD49F]/20"
                   : "bg-gray-200 text-gray-400"
-              }`}
+                }`}
             >
               {step.id < currentStep ? (
                 <svg
@@ -42,11 +41,10 @@ export function ProgressBar({ currentStep, totalSteps, steps }: ProgressBarProps
               )}
             </div>
             <span
-              className={`text-xs mt-2 text-center hidden md:block ${
-                step.id === currentStep
-                  ? "text-[#2DD49F] font-semibold"
-                  : "text-gray-500"
-              }`}
+              className={`text-xs mt-2 text-center hidden md:block ${step.id === currentStep
+                ? "text-[#2DD49F] font-semibold"
+                : "text-gray-500"
+                }`}
             >
               {step.title}
             </span>

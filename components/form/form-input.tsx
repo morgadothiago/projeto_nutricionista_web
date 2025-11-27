@@ -63,7 +63,7 @@ export const FormInput = React.forwardRef<HTMLInputElement, FormInputProps>(
           <Label
             htmlFor={props.id || props.name}
             className={cn(
-              "block text-sm font-medium text-gray-700 mb-2",
+              "block text-sm font-semibold text-gray-700 mb-2.5",
               error && "text-red-600",
               labelClassName
             )}
@@ -76,9 +76,9 @@ export const FormInput = React.forwardRef<HTMLInputElement, FormInputProps>(
         <div className="relative">
           {/* Left Icon */}
           {leftIcon && (
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+            <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
               {leftIcon}
-            </div>
+            </span>
           )}
 
           {/* Input */}
@@ -86,10 +86,14 @@ export const FormInput = React.forwardRef<HTMLInputElement, FormInputProps>(
             ref={ref}
             type={inputType}
             className={cn(
+              "h-12 rounded-xl border-2 px-4 text-base transition-all",
+              "border-gray-200 hover:border-gray-300",
+              "focus-visible:border-[#2DD49F] focus-visible:ring-[#2DD49F]/20 focus-visible:ring-[3px]",
+              "placeholder:text-gray-400",
               leftIcon && "pl-10",
               (rightIcon || shouldShowPasswordToggle) && "pr-10",
               error &&
-                "border-red-500 focus-visible:ring-red-500 focus-visible:border-red-500",
+              "border-red-500 focus-visible:ring-red-500/20 focus-visible:border-red-500",
               className
             )}
             aria-invalid={error ? "true" : "false"}
@@ -105,7 +109,7 @@ export const FormInput = React.forwardRef<HTMLInputElement, FormInputProps>(
 
           {/* Right Icon or Password Toggle */}
           {(rightIcon || shouldShowPasswordToggle) && (
-            <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
+            <span className="absolute inset-y-0 right-0 pr-3 flex items-center">
               {shouldShowPasswordToggle ? (
                 <button
                   type="button"
@@ -121,11 +125,11 @@ export const FormInput = React.forwardRef<HTMLInputElement, FormInputProps>(
                   )}
                 </button>
               ) : (
-                <div className="text-gray-400 pointer-events-none">
+                <span className="text-gray-400 pointer-events-none">
                   {rightIcon}
-                </div>
+                </span>
               )}
-            </div>
+            </span>
           )}
         </div>
 
@@ -133,7 +137,7 @@ export const FormInput = React.forwardRef<HTMLInputElement, FormInputProps>(
         {error && (
           <p
             id={`${props.id || props.name}-error`}
-            className="mt-1.5 text-sm text-red-600"
+            className="mt-2 text-sm text-red-600 font-medium"
             role="alert"
           >
             {error}

@@ -1,4 +1,4 @@
-import { FormInput } from "@/components/form"
+import { FormInput, FormSelect } from "@/components/form"
 import { User, Calendar, Briefcase, Phone, MapPin } from "lucide-react"
 import { DadosPessoaisData } from "@/types/anamnese"
 
@@ -10,17 +10,37 @@ interface Step1Props {
 
 export function Step1DadosPessoais({ data, onChange, errors }: Step1Props) {
   return (
-    <div className="space-y-6">
-      <div>
-        <h2 className="text-2xl font-bold text-[#2E3A59] mb-2">
+    <div className="space-y-10">
+      <div className="space-y-4">
+        <div className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-50 text-emerald-700 rounded-full text-sm font-semibold">
+          <span className="w-6 h-6 bg-emerald-500 text-white rounded-full flex items-center justify-center text-xs">1</span>
+          Passo 1 de 5
+        </div>
+        <h2 className="text-4xl font-bold text-[#2E3A59] tracking-tight">
           Dados Pessoais
         </h2>
-        <p className="text-gray-600">
+        <p className="text-lg text-gray-500 leading-relaxed">
           Vamos começar com suas informações básicas
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        {/* Nome */}
+        <FormInput
+          id="nome"
+          name="nome"
+          type="text"
+          label="Nome Completo"
+          required
+          leftIcon={<User className="h-5 w-5" />}
+          placeholder="Seu nome completo"
+          className="py-3 rounded-xl bg-white"
+          containerClassName="md:col-span-2"
+          value={data.nome}
+          onChange={(e) => onChange({ nome: e.target.value })}
+          error={errors?.nome}
+        />
+
         {/* Data de Nascimento */}
         <FormInput
           id="dataNascimento"
@@ -36,29 +56,23 @@ export function Step1DadosPessoais({ data, onChange, errors }: Step1Props) {
         />
 
         {/* Gênero */}
-        <div>
-          <label className="block text-sm font-medium text-[#2E3A59] mb-2">
-            Gênero <span className="text-red-500">*</span>
-          </label>
-          <select
-            value={data.genero}
-            onChange={(e) =>
-              onChange({
-                genero: e.target.value as DadosPessoaisData["genero"],
-              })
-            }
-            className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#2DD49F] focus:border-transparent outline-none transition-all bg-white"
-            required
-          >
-            <option value="">Selecione</option>
-            <option value="masculino">Masculino</option>
-            <option value="feminino">Feminino</option>
-            <option value="outro">Outro</option>
-          </select>
-          {errors?.genero && (
-            <p className="mt-1 text-sm text-red-500">{errors.genero}</p>
-          )}
-        </div>
+        <FormSelect
+          id="genero"
+          name="genero"
+          label="Gênero"
+          required
+          placeholder="Selecione"
+          value={data.genero}
+          onValueChange={(value) =>
+            onChange({ genero: value as DadosPessoaisData["genero"] })
+          }
+          options={[
+            { value: "masculino", label: "Masculino" },
+            { value: "feminino", label: "Feminino" },
+            { value: "outro", label: "Outro" },
+          ]}
+          error={errors?.genero}
+        />
 
         {/* Profissão */}
         <FormInput
@@ -106,49 +120,45 @@ export function Step1DadosPessoais({ data, onChange, errors }: Step1Props) {
         />
 
         {/* Estado */}
-        <div>
-          <label className="block text-sm font-medium text-[#2E3A59] mb-2">
-            Estado <span className="text-red-500">*</span>
-          </label>
-          <select
-            value={data.estado}
-            onChange={(e) => onChange({ estado: e.target.value })}
-            className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#2DD49F] focus:border-transparent outline-none transition-all bg-white"
-            required
-          >
-            <option value="">Selecione</option>
-            <option value="AC">Acre</option>
-            <option value="AL">Alagoas</option>
-            <option value="AP">Amapá</option>
-            <option value="AM">Amazonas</option>
-            <option value="BA">Bahia</option>
-            <option value="CE">Ceará</option>
-            <option value="DF">Distrito Federal</option>
-            <option value="ES">Espírito Santo</option>
-            <option value="GO">Goiás</option>
-            <option value="MA">Maranhão</option>
-            <option value="MT">Mato Grosso</option>
-            <option value="MS">Mato Grosso do Sul</option>
-            <option value="MG">Minas Gerais</option>
-            <option value="PA">Pará</option>
-            <option value="PB">Paraíba</option>
-            <option value="PR">Paraná</option>
-            <option value="PE">Pernambuco</option>
-            <option value="PI">Piauí</option>
-            <option value="RJ">Rio de Janeiro</option>
-            <option value="RN">Rio Grande do Norte</option>
-            <option value="RS">Rio Grande do Sul</option>
-            <option value="RO">Rondônia</option>
-            <option value="RR">Roraima</option>
-            <option value="SC">Santa Catarina</option>
-            <option value="SP">São Paulo</option>
-            <option value="SE">Sergipe</option>
-            <option value="TO">Tocantins</option>
-          </select>
-          {errors?.estado && (
-            <p className="mt-1 text-sm text-red-500">{errors.estado}</p>
-          )}
-        </div>
+        <FormSelect
+          id="estado"
+          name="estado"
+          label="Estado"
+          required
+          placeholder="Selecione"
+          value={data.estado}
+          onValueChange={(value) => onChange({ estado: value })}
+          options={[
+            { value: "AC", label: "Acre" },
+            { value: "AL", label: "Alagoas" },
+            { value: "AP", label: "Amapá" },
+            { value: "AM", label: "Amazonas" },
+            { value: "BA", label: "Bahia" },
+            { value: "CE", label: "Ceará" },
+            { value: "DF", label: "Distrito Federal" },
+            { value: "ES", label: "Espírito Santo" },
+            { value: "GO", label: "Goiás" },
+            { value: "MA", label: "Maranhão" },
+            { value: "MT", label: "Mato Grosso" },
+            { value: "MS", label: "Mato Grosso do Sul" },
+            { value: "MG", label: "Minas Gerais" },
+            { value: "PA", label: "Pará" },
+            { value: "PB", label: "Paraíba" },
+            { value: "PR", label: "Paraná" },
+            { value: "PE", label: "Pernambuco" },
+            { value: "PI", label: "Piauí" },
+            { value: "RJ", label: "Rio de Janeiro" },
+            { value: "RN", label: "Rio Grande do Norte" },
+            { value: "RS", label: "Rio Grande do Sul" },
+            { value: "RO", label: "Rondônia" },
+            { value: "RR", label: "Roraima" },
+            { value: "SC", label: "Santa Catarina" },
+            { value: "SP", label: "São Paulo" },
+            { value: "SE", label: "Sergipe" },
+            { value: "TO", label: "Tocantins" },
+          ]}
+          error={errors?.estado}
+        />
       </div>
     </div>
   )

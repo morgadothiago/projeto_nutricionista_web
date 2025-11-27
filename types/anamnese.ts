@@ -4,6 +4,7 @@
 
 // Step 1: Dados Pessoais
 export interface DadosPessoaisData {
+  nome: string
   dataNascimento: string
   genero: "masculino" | "feminino" | "outro"
   profissao: string
