@@ -11,6 +11,7 @@ import {
   Heart,
   BookOpen,
   PieChart,
+  FileCheck,
 } from "lucide-react"
 import type { MenuSection } from "@/types"
 
@@ -68,6 +69,12 @@ export const MENU_CONFIG: MenuSection[] = [
   {
     title: "Meu Acompanhamento", // Apenas para pacientes
     items: [
+      {
+        label: "Preencher Anamnese",
+        href: "/dashboard/paciente/anamnese",
+        icon: FileCheck,
+        roles: ["paciente"],
+      },
       {
         label: "Meu Plano",
         href: "/dashboard/meu-plano",

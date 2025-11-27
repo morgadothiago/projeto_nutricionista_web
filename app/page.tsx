@@ -6,7 +6,7 @@ import { useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { useAuthContext } from "@/app/contexts/auth-context"
-import { ArrowRight, Check, CheckCircle2, Leaf, ShieldCheck, Smartphone, Star, Users } from "lucide-react"
+import { ArrowRight, Check, CheckCircle2, Leaf, ShieldCheck, Smartphone, Star, Users, FileCheck, ClipboardList } from "lucide-react"
 import {
   Accordion,
   AccordionContent,
@@ -64,29 +64,35 @@ export default function Home() {
       </nav>
 
       {/* Hero Section */}
-      <section className="pt-32 pb-16 lg:pt-40 lg:pb-24 bg-gradient-to-br from-emerald-50 via-white to-emerald-50 overflow-hidden">
+      <section className="pt-32 pb-16 lg:pt-40 lg:pb-24 bg-gradient-to-br from-emerald-50 via-white to-teal-50 overflow-hidden relative">
+        {/* Floating background elements */}
+        <div className="absolute top-20 left-10 w-72 h-72 bg-emerald-200 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob"></div>
+        <div className="absolute top-40 right-10 w-72 h-72 bg-teal-200 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-2000"></div>
+        <div className="absolute -bottom-8 left-20 w-72 h-72 bg-emerald-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-4000"></div>
+
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div className="space-y-8 z-10">
-              <div className="inline-flex items-center px-4 py-2 rounded-full bg-emerald-100 text-emerald-800 text-sm font-medium animate-fade-in-up">
-                <Star className="w-4 h-4 mr-2 fill-emerald-800" />
+              <div className="inline-flex items-center px-4 py-2 rounded-full bg-gradient-to-r from-emerald-100 to-teal-100 text-emerald-800 text-sm font-medium animate-fade-in shadow-sm">
+                <Star className="w-4 h-4 mr-2 fill-emerald-600 text-emerald-600" />
                 A plataforma #1 para nutricionistas e pacientes
               </div>
-              <h1 className="text-4xl lg:text-6xl font-bold text-slate-900 leading-tight">
-                Cuidar da sua alimentação pode ser <span className="text-emerald-600">mais leve</span>.
+              <h1 className="text-4xl lg:text-6xl font-bold text-slate-900 leading-tight animate-slide-in-left">
+                Cuidar da sua alimentação pode ser <span className="bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">mais leve</span>.
               </h1>
               <p className="text-lg text-slate-600 leading-relaxed max-w-xl">
                 Conectamos nutricionistas e pacientes de forma simples e eficiente.
                 Planos personalizados, acompanhamento em tempo real e resultados que duram.
               </p>
-              <div className="flex flex-col sm:flex-row gap-4">
+              <div className="flex flex-col sm:flex-row gap-4 animate-fade-in">
                 <Link href="/cadastro">
-                  <Button className="w-full sm:w-auto h-12 px-8 text-lg bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl shadow-lg shadow-emerald-200 transition-all hover:scale-105">
+                  <Button className="w-full sm:w-auto h-14 px-8 text-lg bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white rounded-xl shadow-lg shadow-emerald-200/50 transition-all hover:scale-105 hover:shadow-xl hover:shadow-emerald-300/50 font-semibold">
                     Criar conta grátis
+                    <ArrowRight className="ml-2 w-5 h-5" />
                   </Button>
                 </Link>
                 <Link href="/login">
-                  <Button variant="outline" className="w-full sm:w-auto h-12 px-8 text-lg border-emerald-200 text-emerald-700 hover:bg-emerald-50 rounded-xl">
+                  <Button variant="outline" className="w-full sm:w-auto h-14 px-8 text-lg border-2 border-emerald-200 text-emerald-700 hover:bg-emerald-50 hover:border-emerald-300 rounded-xl font-semibold transition-all">
                     Já tenho conta
                   </Button>
                 </Link>
@@ -112,6 +118,100 @@ export default function Home() {
                 className="relative z-10 object-contain drop-shadow-2xl hover:scale-[1.02] transition-transform duration-500"
                 priority
               />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Anamnese CTA Section */}
+      <section className="py-20 bg-gradient-to-br from-emerald-500 via-emerald-600 to-teal-600 relative overflow-hidden">
+        <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10"></div>
+        <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-0 left-0 w-96 h-96 bg-teal-500/20 rounded-full blur-3xl"></div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <div className="text-white">
+              <div className="inline-flex items-center px-4 py-2 rounded-full bg-white/20 text-white text-sm font-medium mb-4">
+                <FileCheck className="w-4 h-4 mr-2" />
+                Avaliação Nutricional Gratuita
+              </div>
+              <h2 className="text-3xl lg:text-4xl font-bold mb-4">
+                Comece sua jornada com uma avaliação completa
+              </h2>
+              <p className="text-emerald-50 text-lg mb-6">
+                Preencha nossa anamnese detalhada e receba uma análise personalizada do seu perfil nutricional.
+                É rápido, fácil e completamente gratuito!
+              </p>
+              <ul className="space-y-3 mb-8">
+                {[
+                  "5 etapas simples e rápidas",
+                  "Análise completa de saúde e hábitos",
+                  "Cálculo automático de IMC",
+                  "Recomendações personalizadas"
+                ].map((item, idx) => (
+                  <li key={idx} className="flex items-center gap-3 text-white">
+                    <CheckCircle2 className="w-5 h-5 text-emerald-200 flex-shrink-0" />
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+              <Link href="/anamnese">
+                <Button className="h-12 px-8 text-lg bg-white text-emerald-600 hover:bg-emerald-50 rounded-xl shadow-lg transition-all hover:scale-105">
+                  Preencher Anamnese Gratuita
+                  <ArrowRight className="ml-2 w-5 h-5" />
+                </Button>
+              </Link>
+            </div>
+            <div className="relative">
+              <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-white/20">
+                <div className="space-y-4">
+                  <div className="flex items-center gap-4 p-4 bg-white/10 rounded-xl">
+                    <div className="w-12 h-12 rounded-full bg-emerald-400 flex items-center justify-center text-white font-bold">
+                      1
+                    </div>
+                    <div className="text-white">
+                      <p className="font-semibold">Dados Pessoais</p>
+                      <p className="text-sm text-emerald-100">Informações básicas</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-4 p-4 bg-white/10 rounded-xl">
+                    <div className="w-12 h-12 rounded-full bg-emerald-400 flex items-center justify-center text-white font-bold">
+                      2
+                    </div>
+                    <div className="text-white">
+                      <p className="font-semibold">Histórico de Saúde</p>
+                      <p className="text-sm text-emerald-100">Doenças e alergias</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-4 p-4 bg-white/10 rounded-xl">
+                    <div className="w-12 h-12 rounded-full bg-emerald-400 flex items-center justify-center text-white font-bold">
+                      3
+                    </div>
+                    <div className="text-white">
+                      <p className="font-semibold">Seus Objetivos</p>
+                      <p className="text-sm text-emerald-100">Metas e peso desejado</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-4 p-4 bg-white/10 rounded-xl">
+                    <div className="w-12 h-12 rounded-full bg-emerald-400 flex items-center justify-center text-white font-bold">
+                      4
+                    </div>
+                    <div className="text-white">
+                      <p className="font-semibold">Hábitos Alimentares</p>
+                      <p className="text-sm text-emerald-100">Rotina e preferências</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-4 p-4 bg-white/10 rounded-xl">
+                    <div className="w-12 h-12 rounded-full bg-emerald-400 flex items-center justify-center text-white font-bold">
+                      5
+                    </div>
+                    <div className="text-white">
+                      <p className="font-semibold">Estilo de Vida</p>
+                      <p className="text-sm text-emerald-100">Atividades e sono</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -144,11 +244,13 @@ export default function Home() {
                 description: "Seus dados de saúde e conversas são protegidos com a mais alta segurança."
               }
             ].map((feature, index) => (
-              <div key={index} className="group p-8 rounded-2xl bg-slate-50 border border-slate-100 hover:shadow-xl hover:border-emerald-100 transition-all duration-300">
-                <div className="w-14 h-14 rounded-xl bg-emerald-100 group-hover:bg-emerald-500 group-hover:text-white flex items-center justify-center mb-6 transition-colors duration-300">
-                  {feature.icon}
+              <div key={index} className="group p-8 rounded-2xl bg-white border border-slate-200 hover:border-emerald-200 hover:shadow-2xl hover:shadow-emerald-100/50 transition-all duration-500 hover:-translate-y-2">
+                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-100 to-teal-100 group-hover:from-emerald-500 group-hover:to-teal-600 flex items-center justify-center mb-6 transition-all duration-500 group-hover:scale-110 group-hover:rotate-6">
+                  <div className="group-hover:text-white transition-colors duration-300">
+                    {feature.icon}
+                  </div>
                 </div>
-                <h3 className="text-xl font-bold text-slate-900 mb-3">{feature.title}</h3>
+                <h3 className="text-xl font-bold text-slate-900 mb-3 group-hover:text-emerald-700 transition-colors">{feature.title}</h3>
                 <p className="text-slate-600 leading-relaxed">
                   {feature.description}
                 </p>
@@ -159,8 +261,12 @@ export default function Home() {
       </section>
 
       {/* How it Works */}
-      <section className="py-20 bg-emerald-900 text-white overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="py-20 bg-gradient-to-br from-emerald-900 via-emerald-800 to-teal-900 text-white overflow-hidden relative">
+        {/* Background decorative elements */}
+        <div className="absolute top-0 left-0 w-96 h-96 bg-emerald-600/20 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-0 right-0 w-96 h-96 bg-teal-600/20 rounded-full blur-3xl"></div>
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <div>
               <h2 className="text-3xl lg:text-4xl font-bold mb-6">Como funciona?</h2>
@@ -185,10 +291,10 @@ export default function Home() {
                     desc: "Receba planos, acompanhe a evolução e conquiste seus objetivos."
                   }
                 ].map((item, idx) => (
-                  <div key={idx} className="flex gap-6">
-                    <div className="text-4xl font-bold text-emerald-500/50">{item.step}</div>
+                  <div key={idx} className="group flex gap-6 transition-all duration-300 hover:translate-x-2">
+                    <div className="text-4xl font-bold text-emerald-500/30 group-hover:text-emerald-400/60 transition-colors duration-300">{item.step}</div>
                     <div>
-                      <h4 className="text-xl font-bold mb-2">{item.title}</h4>
+                      <h4 className="text-xl font-bold mb-2 group-hover:text-emerald-300 transition-colors">{item.title}</h4>
                       <p className="text-emerald-200">{item.desc}</p>
                     </div>
                   </div>
@@ -196,20 +302,20 @@ export default function Home() {
               </div>
             </div>
             <div className="relative">
-              <div className="absolute inset-0 bg-emerald-500/20 blur-3xl rounded-full"></div>
-              <div className="relative bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-8">
+              <div className="absolute inset-0 bg-emerald-500/20 blur-3xl rounded-full animate-pulse"></div>
+              <div className="relative bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-8 shadow-2xl">
                 <div className="space-y-4">
-                  <div className="flex items-center gap-4 bg-white/5 p-4 rounded-xl">
-                    <CheckCircle2 className="text-emerald-400" />
-                    <span>Chat integrado com nutricionista</span>
+                  <div className="group flex items-center gap-4 bg-white/5 hover:bg-white/10 p-4 rounded-xl transition-all duration-300 hover:translate-x-2">
+                    <CheckCircle2 className="text-emerald-400 group-hover:scale-110 transition-transform duration-300" />
+                    <span className="group-hover:text-white transition-colors">Chat integrado com nutricionista</span>
                   </div>
-                  <div className="flex items-center gap-4 bg-white/5 p-4 rounded-xl">
-                    <CheckCircle2 className="text-emerald-400" />
-                    <span>Diário alimentar digital</span>
+                  <div className="group flex items-center gap-4 bg-white/5 hover:bg-white/10 p-4 rounded-xl transition-all duration-300 hover:translate-x-2">
+                    <CheckCircle2 className="text-emerald-400 group-hover:scale-110 transition-transform duration-300" />
+                    <span className="group-hover:text-white transition-colors">Diário alimentar digital</span>
                   </div>
-                  <div className="flex items-center gap-4 bg-white/5 p-4 rounded-xl">
-                    <CheckCircle2 className="text-emerald-400" />
-                    <span>Gráficos de evolução</span>
+                  <div className="group flex items-center gap-4 bg-white/5 hover:bg-white/10 p-4 rounded-xl transition-all duration-300 hover:translate-x-2">
+                    <CheckCircle2 className="text-emerald-400 group-hover:scale-110 transition-transform duration-300" />
+                    <span className="group-hover:text-white transition-colors">Gráficos de evolução</span>
                   </div>
                 </div>
               </div>
@@ -219,8 +325,12 @@ export default function Home() {
       </section>
 
       {/* Pricing Section */}
-      <section className="py-24 bg-slate-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="py-24 bg-gradient-to-br from-slate-50 to-emerald-50/30 relative overflow-hidden">
+        {/* Background decorative elements */}
+        <div className="absolute top-20 right-20 w-64 h-64 bg-emerald-200/30 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-20 left-20 w-64 h-64 bg-teal-200/30 rounded-full blur-3xl"></div>
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center max-w-3xl mx-auto mb-16">
             <h2 className="text-3xl font-bold text-slate-900 mb-4">Planos que cabem no seu bolso</h2>
             <p className="text-lg text-slate-600">
@@ -229,75 +339,75 @@ export default function Home() {
           </div>
           <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
             {/* Paciente */}
-            <div className="bg-white rounded-2xl p-8 shadow-sm border border-slate-200 hover:shadow-xl transition-all duration-300">
-              <h3 className="text-xl font-bold text-slate-900 mb-2">Paciente</h3>
+            <div className="group bg-white rounded-2xl p-8 shadow-sm border border-slate-200 hover:shadow-2xl hover:shadow-emerald-100/50 transition-all duration-500 hover:-translate-y-2">
+              <h3 className="text-xl font-bold text-slate-900 mb-2 group-hover:text-emerald-700 transition-colors">Paciente</h3>
               <div className="text-4xl font-bold text-slate-900 mb-6">Grátis</div>
               <p className="text-slate-600 mb-8">Para quem quer começar a cuidar da saúde.</p>
               <ul className="space-y-4 mb-8">
-                <li className="flex items-center gap-3 text-slate-600">
-                  <Check className="w-5 h-5 text-emerald-500" /> Acesso ao app
+                <li className="flex items-center gap-3 text-slate-600 group-hover:text-slate-800 transition-colors">
+                  <Check className="w-5 h-5 text-emerald-500 group-hover:scale-110 transition-transform" /> Acesso ao app
                 </li>
-                <li className="flex items-center gap-3 text-slate-600">
-                  <Check className="w-5 h-5 text-emerald-500" /> Diário alimentar
+                <li className="flex items-center gap-3 text-slate-600 group-hover:text-slate-800 transition-colors">
+                  <Check className="w-5 h-5 text-emerald-500 group-hover:scale-110 transition-transform" /> Diário alimentar
                 </li>
-                <li className="flex items-center gap-3 text-slate-600">
-                  <Check className="w-5 h-5 text-emerald-500" /> Chat com nutri
+                <li className="flex items-center gap-3 text-slate-600 group-hover:text-slate-800 transition-colors">
+                  <Check className="w-5 h-5 text-emerald-500 group-hover:scale-110 transition-transform" /> Chat com nutri
                 </li>
               </ul>
               <Link href="/cadastro">
-                <Button className="w-full bg-slate-100 hover:bg-slate-200 text-slate-900">
+                <Button className="w-full bg-slate-100 hover:bg-emerald-500 hover:text-white text-slate-900 transition-all duration-300 hover:shadow-lg h-12">
                   Começar Grátis
                 </Button>
               </Link>
             </div>
 
             {/* Nutri Pro */}
-            <div className="bg-white rounded-2xl p-8 shadow-xl border-2 border-emerald-500 relative transform md:-translate-y-4">
-              <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-emerald-500 text-white px-4 py-1 rounded-full text-sm font-medium">
+            <div className="group bg-white rounded-2xl p-8 shadow-xl border-2 border-emerald-500 relative transform md:-translate-y-4 hover:shadow-2xl hover:shadow-emerald-200/50 transition-all duration-500 hover:-translate-y-6">
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-gradient-to-r from-emerald-500 to-teal-600 text-white px-4 py-1 rounded-full text-sm font-medium shadow-lg">
                 Mais Popular
               </div>
-              <h3 className="text-xl font-bold text-slate-900 mb-2">Nutri Pro</h3>
-              <div className="text-4xl font-bold text-slate-900 mb-6">R$ 97<span className="text-lg font-normal text-slate-500">/mês</span></div>
+              <h3 className="text-xl font-bold text-slate-900 mb-2 group-hover:text-emerald-700 transition-colors">Nutri Pro</h3>
+              <div className="text-4xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent mb-6">R$ 97<span className="text-lg font-normal text-slate-500">/mês</span></div>
               <p className="text-slate-600 mb-8">Para nutricionistas que querem escalar.</p>
               <ul className="space-y-4 mb-8">
-                <li className="flex items-center gap-3 text-slate-600">
-                  <Check className="w-5 h-5 text-emerald-500" /> Até 50 pacientes
+                <li className="flex items-center gap-3 text-slate-600 group-hover:text-slate-800 transition-colors">
+                  <Check className="w-5 h-5 text-emerald-500 group-hover:scale-110 transition-transform" /> Até 50 pacientes
                 </li>
-                <li className="flex items-center gap-3 text-slate-600">
-                  <Check className="w-5 h-5 text-emerald-500" /> App personalizado
+                <li className="flex items-center gap-3 text-slate-600 group-hover:text-slate-800 transition-colors">
+                  <Check className="w-5 h-5 text-emerald-500 group-hover:scale-110 transition-transform" /> App personalizado
                 </li>
-                <li className="flex items-center gap-3 text-slate-600">
-                  <Check className="w-5 h-5 text-emerald-500" /> Gestão financeira
+                <li className="flex items-center gap-3 text-slate-600 group-hover:text-slate-800 transition-colors">
+                  <Check className="w-5 h-5 text-emerald-500 group-hover:scale-110 transition-transform" /> Gestão financeira
                 </li>
-                <li className="flex items-center gap-3 text-slate-600">
-                  <Check className="w-5 h-5 text-emerald-500" /> Suporte prioritário
+                <li className="flex items-center gap-3 text-slate-600 group-hover:text-slate-800 transition-colors">
+                  <Check className="w-5 h-5 text-emerald-500 group-hover:scale-110 transition-transform" /> Suporte prioritário
                 </li>
               </ul>
               <Link href="/cadastro">
-                <Button className="w-full bg-emerald-500 hover:bg-emerald-600 text-white shadow-lg shadow-emerald-200">
+                <Button className="w-full bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white shadow-lg shadow-emerald-200 hover:shadow-xl hover:shadow-emerald-300 transition-all duration-300 h-12">
                   Assinar Agora
                 </Button>
               </Link>
             </div>
 
             {/* Clinic */}
-            <div className="bg-white rounded-2xl p-8 shadow-sm border border-slate-200 hover:shadow-xl transition-all duration-300">
-              <h3 className="text-xl font-bold text-slate-900 mb-2">Clínica</h3>
+            <div className="group bg-white rounded-2xl p-8 shadow-sm border border-slate-200 hover:shadow-2xl hover:shadow-emerald-100/50 transition-all duration-500 hover:-translate-y-2">
+              <h3 className="text-xl font-bold text-slate-900 mb-2 group-hover:text-emerald-700 transition-colors">Clínica</h3>
               <div className="text-4xl font-bold text-slate-900 mb-6">R$ 297<span className="text-lg font-normal text-slate-500">/mês</span></div>
               <p className="text-slate-600 mb-8">Para clínicas com múltiplos profissionais.</p>
               <ul className="space-y-4 mb-8">
-                <li className="flex items-center gap-3 text-slate-600">
-                  <Check className="w-5 h-5 text-emerald-500" /> Pacientes ilimitados
+                <li className="flex items-center gap-3 text-slate-600 group-hover:text-slate-800 transition-colors">
+                  <Check className="w-5 h-5 text-emerald-500 group-hover:scale-110 transition-transform" /> Pacientes ilimitados
                 </li>
-                <li className="flex items-center gap-3 text-slate-600">
-                  <Check className="w-5 h-5 text-emerald-500" /> Múltiplos nutris
+                <li className="flex items-center gap-3 text-slate-600 group-hover:text-slate-800 transition-colors">
+                  <Check className="w-5 h-5 text-emerald-500 group-hover:scale-110 transition-transform" /> Múltiplos nutris
                 </li>
-                <li className="flex items-center gap-3 text-slate-600">
-                  <Check className="w-5 h-5 text-emerald-500" /> Relatórios avançados
+                <li className="flex items-center gap-3 text-slate-600 group-hover:text-slate-800 transition-colors">
+                  <Check className="w-5 h-5 text-emerald-500 group-hover:scale-110 transition-transform" /> Relatórios avançados
                 </li>
               </ul>
               <Link href="/cadastro">
-                <Button className="w-full bg-slate-100 hover:bg-slate-200 text-slate-900">
+                <Button className="w-full bg-slate-100 hover:bg-emerald-500 hover:text-white text-slate-900 transition-all duration-300 hover:shadow-lg h-12">
                   Falar com Vendas
                 </Button>
               </Link>
@@ -307,8 +417,12 @@ export default function Home() {
       </section>
 
       {/* Testimonials */}
-      <section className="py-24 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="py-24 bg-white relative overflow-hidden">
+        {/* Background decorative elements */}
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-emerald-100/40 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-teal-100/40 rounded-full blur-3xl"></div>
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center max-w-3xl mx-auto mb-16">
             <h2 className="text-3xl font-bold text-slate-900 mb-4">O que dizem sobre nós</h2>
             <p className="text-lg text-slate-600">
@@ -333,16 +447,16 @@ export default function Home() {
                 content: "Adoro as receitas e a facilidade de falar com minha nutricionista. Recomendo para todos!"
               }
             ].map((testimonial, index) => (
-              <div key={index} className="p-8 rounded-2xl bg-slate-50 border border-slate-100">
+              <div key={index} className="group p-8 rounded-2xl bg-gradient-to-br from-slate-50 to-emerald-50/30 border border-slate-100 hover:border-emerald-200 hover:shadow-xl hover:shadow-emerald-100/50 transition-all duration-500 hover:-translate-y-2">
                 <div className="flex gap-1 mb-4">
                   {[1, 2, 3, 4, 5].map((star) => (
-                    <Star key={star} className="w-5 h-5 fill-yellow-400 text-yellow-400" />
+                    <Star key={star} className="w-5 h-5 fill-yellow-400 text-yellow-400 group-hover:scale-110 transition-transform duration-300" />
                   ))}
                 </div>
-                <p className="text-slate-700 mb-6 italic">"{testimonial.content}"</p>
-                <div>
+                <p className="text-slate-700 mb-6 italic leading-relaxed group-hover:text-slate-900 transition-colors">"{testimonial.content}"</p>
+                <div className="border-t border-slate-200 pt-4">
                   <div className="font-bold text-slate-900">{testimonial.name}</div>
-                  <div className="text-sm text-emerald-600">{testimonial.role}</div>
+                  <div className="text-sm font-medium bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">{testimonial.role}</div>
                 </div>
               </div>
             ))}
@@ -383,8 +497,13 @@ export default function Home() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-24 bg-white">
-        <div className="max-w-4xl mx-auto px-4 text-center">
+      <section className="py-24 bg-gradient-to-br from-white to-emerald-50/50 relative overflow-hidden">
+        {/* Floating background elements */}
+        <div className="absolute top-0 left-0 w-96 h-96 bg-emerald-200/30 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob"></div>
+        <div className="absolute top-0 right-0 w-96 h-96 bg-teal-200/30 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob animation-delay-2000"></div>
+        <div className="absolute bottom-0 left-1/2 w-96 h-96 bg-emerald-300/30 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob animation-delay-4000"></div>
+
+        <div className="max-w-4xl mx-auto px-4 text-center relative z-10">
           <h2 className="text-4xl font-bold text-slate-900 mb-6">
             Pronto para transformar sua saúde?
           </h2>
@@ -392,7 +511,7 @@ export default function Home() {
             Junte-se a milhares de pessoas que já estão mudando de vida com o Zap Nutre.
           </p>
           <Link href="/cadastro">
-            <Button className="h-14 px-10 text-lg bg-emerald-500 hover:bg-emerald-600 text-white rounded-full shadow-xl shadow-emerald-200 hover:shadow-2xl transition-all hover:-translate-y-1">
+            <Button className="h-14 px-10 text-lg bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white rounded-full shadow-xl shadow-emerald-200/50 hover:shadow-2xl hover:shadow-emerald-300/50 transition-all hover:-translate-y-1 hover:scale-105 font-semibold">
               Começar Gratuitamente <ArrowRight className="ml-2 w-5 h-5" />
             </Button>
           </Link>
@@ -400,7 +519,7 @@ export default function Home() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-slate-50 border-t border-slate-200 py-12">
+      <footer className="bg-gradient-to-br from-slate-50 to-slate-100 border-t border-slate-200 py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-4 gap-8 mb-8">
             <div className="col-span-1 md:col-span-2">
@@ -411,25 +530,25 @@ export default function Home() {
                 height={40}
                 className="h-8 w-auto mb-4"
               />
-              <p className="text-slate-500 max-w-xs">
+              <p className="text-slate-600 max-w-xs leading-relaxed">
                 A plataforma completa para nutricionistas e pacientes conectarem saúde e tecnologia.
               </p>
             </div>
             <div>
               <h4 className="font-bold text-slate-900 mb-4">Produto</h4>
-              <ul className="space-y-2 text-sm text-slate-500">
-                <li><Link href="#" className="hover:text-emerald-600">Funcionalidades</Link></li>
-                <li><Link href="#" className="hover:text-emerald-600">Preços</Link></li>
-                <li><Link href="#" className="hover:text-emerald-600">Para Nutricionistas</Link></li>
-                <li><Link href="#" className="hover:text-emerald-600">Para Pacientes</Link></li>
+              <ul className="space-y-2 text-sm text-slate-600">
+                <li><Link href="#" className="hover:text-emerald-600 transition-colors">Funcionalidades</Link></li>
+                <li><Link href="#" className="hover:text-emerald-600 transition-colors">Preços</Link></li>
+                <li><Link href="#" className="hover:text-emerald-600 transition-colors">Para Nutricionistas</Link></li>
+                <li><Link href="#" className="hover:text-emerald-600 transition-colors">Para Pacientes</Link></li>
               </ul>
             </div>
             <div>
               <h4 className="font-bold text-slate-900 mb-4">Legal</h4>
-              <ul className="space-y-2 text-sm text-slate-500">
-                <li><Link href="#" className="hover:text-emerald-600">Termos de Uso</Link></li>
-                <li><Link href="#" className="hover:text-emerald-600">Privacidade</Link></li>
-                <li><Link href="#" className="hover:text-emerald-600">Contato</Link></li>
+              <ul className="space-y-2 text-sm text-slate-600">
+                <li><Link href="#" className="hover:text-emerald-600 transition-colors">Termos de Uso</Link></li>
+                <li><Link href="#" className="hover:text-emerald-600 transition-colors">Privacidade</Link></li>
+                <li><Link href="#" className="hover:text-emerald-600 transition-colors">Contato</Link></li>
               </ul>
             </div>
           </div>

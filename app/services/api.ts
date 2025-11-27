@@ -1,4 +1,5 @@
 import { DoctorRegisterPayload, RegisterFormData } from "@/types"
+import type { AnamneseFormData } from "@/types/anamnese"
 import Axios from "axios"
 
 
@@ -33,4 +34,12 @@ export async function RegisterDoctor(doctor: DoctorRegisterPayload) {
     password: doctor.password,
     role: "nutricionista",
   })
+}
+
+export async function SubmitAnamnese(data: AnamneseFormData) {
+  return await api.post("/anamnese", data)
+}
+
+export async function SubmitAnamnesePublic(data: AnamneseFormData) {
+  return await api.post("/anamnese/public", data)
 }
