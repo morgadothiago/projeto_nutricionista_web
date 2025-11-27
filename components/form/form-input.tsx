@@ -57,7 +57,7 @@ export const FormInput = React.forwardRef<HTMLInputElement, FormInputProps>(
     const inputType = shouldShowPasswordToggle && showPassword ? "text" : type
 
     return (
-      <div className={cn("w-full", containerClassName)}>
+      <div className={cn("w-full", containerClassName)} suppressHydrationWarning>
         {/* Label */}
         {label && (
           <Label
@@ -67,16 +67,17 @@ export const FormInput = React.forwardRef<HTMLInputElement, FormInputProps>(
               error && "text-red-600",
               labelClassName
             )}
+            suppressHydrationWarning
           >
             {label}
           </Label>
         )}
 
         {/* Input Container */}
-        <div className="relative">
+        <div className="relative" suppressHydrationWarning key={`input-container-${props.id || props.name}`}>
           {/* Left Icon */}
           {leftIcon && (
-            <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+            <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400" suppressHydrationWarning>
               {leftIcon}
             </span>
           )}
@@ -104,12 +105,13 @@ export const FormInput = React.forwardRef<HTMLInputElement, FormInputProps>(
                   ? `${props.id || props.name}-helper`
                   : undefined
             }
+            suppressHydrationWarning
             {...props}
           />
 
           {/* Right Icon or Password Toggle */}
           {(rightIcon || shouldShowPasswordToggle) && (
-            <span className="absolute inset-y-0 right-0 pr-3 flex items-center">
+            <span className="absolute inset-y-0 right-0 pr-3 flex items-center" suppressHydrationWarning>
               {shouldShowPasswordToggle ? (
                 <button
                   type="button"
@@ -139,6 +141,7 @@ export const FormInput = React.forwardRef<HTMLInputElement, FormInputProps>(
             id={`${props.id || props.name}-error`}
             className="mt-2 text-sm text-red-600 font-medium"
             role="alert"
+            suppressHydrationWarning
           >
             {error}
           </p>
@@ -149,6 +152,7 @@ export const FormInput = React.forwardRef<HTMLInputElement, FormInputProps>(
           <p
             id={`${props.id || props.name}-helper`}
             className="mt-1.5 text-sm text-gray-500"
+            suppressHydrationWarning
           >
             {helperText}
           </p>

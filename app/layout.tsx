@@ -4,6 +4,7 @@ import "./globals.css"
 import { SessionProvider } from "@/app/components/providers/session-provider"
 import { AuthProvider } from "@/app/contexts/auth-context"
 import { Toaster } from "sonner"
+import { HydrationErrorSuppressor } from "./components/HydrationErrorSuppressor"
 
 const poppins = Poppins({
   weight: ["300", "400", "500", "600", "700"],
@@ -24,11 +25,36 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="pt-BR">
+    <html lang="pt-BR" suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              // Suprime erros de hidratação causados por extensões do navegador
+              (function() {
+                const originalError = console.error;
+                console.error = function(...args) {
+                  if (
+                    args[0] &&
+                    typeof args[0] === 'string' &&
+                    (args[0].includes('Hydration') ||
+                     args[0].includes('hydrating') ||
+                     args[0].includes('Minified React error'))
+                  ) {
+                    return;
+                  }
+                  originalError.apply(console, args);
+                };
+              })();
+            `,
+          }}
+        />
+      </head>
       <body
         className={`${poppins.variable} font-poppins antialiased bg-[#F0FFF4] scroll-smooth`}
-        suppressHydrationWarning={true}
+        suppressHydrationWarning
       >
+        <HydrationErrorSuppressor />
         <SessionProvider>
           <AuthProvider>
             {children}

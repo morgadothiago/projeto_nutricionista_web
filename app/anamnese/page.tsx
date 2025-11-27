@@ -10,23 +10,25 @@ export default function AnamnesePublicaPage() {
   const router = useRouter()
 
   const handleSubmit = async (data: AnamneseFormData) => {
-
-    console.log(data)
+    console.log("========================================")
+    console.log("📋 DADOS DO FORMULÁRIO:")
+    console.log("   Nome:", data.dadosPessoais.nome)
+    console.log("   Telefone:", data.dadosPessoais.telefone)
+    console.log("========================================")
 
     try {
-      // Envia os dados para o backend (endpoint público)
+      // 1️⃣ ENVIA PARA O BACKEND (salva no banco)
+      console.log("💾 [BACKEND] Enviando para /anamnesis...")
       const response = await api.post("/anamnesis", data)
 
-      toast.success("Anamnese enviada com sucesso!", {
-        description: "Obrigado! Suas informações foram recebidas.",
-        duration: 5000,
+
+      toast.success("Anamnese salva com sucesso!", {
+        description: "Seus dados foram recebidos.",
+        duration: 3000,
       })
 
-      // Redireciona para a home após sucesso
-      setTimeout(() => {
-        router.push("/")
-      }, 2500)
     } catch (error: any) {
+      console.error("❌ [BACKEND] Erro:", error)
       let errorMessage = "Erro ao enviar anamnese. Tente novamente."
 
       if (error.response) {
@@ -38,12 +40,13 @@ export default function AnamnesePublicaPage() {
         errorMessage = "Não foi possível conectar ao servidor."
       }
 
-      toast.error("Erro ao enviar anamnese", {
+      toast.error("Erro ao salvar", {
         description: errorMessage,
       })
 
       throw error
     }
+
   }
 
   return <MultiStepForm onSubmit={handleSubmit} />

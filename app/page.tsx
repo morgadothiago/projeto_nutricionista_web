@@ -34,6 +34,7 @@ import type { AnamneseFormData } from "@/types/anamnese"
 import { api } from "@/app/services/api"
 import { toast } from "sonner"
 import { motion, useScroll, useTransform } from "framer-motion"
+import { n8n } from "./services/n8n"
 
 export default function Home() {
   const router = useRouter()
@@ -74,6 +75,8 @@ export default function Home() {
         description: "Obrigado! Suas informações foram recebidas.",
         duration: 5000,
       })
+
+      await n8n.post("/nutricionista", data)
 
       setTimeout(() => {
         window.location.reload()

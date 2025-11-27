@@ -9,6 +9,36 @@ interface Step1Props {
 }
 
 export function Step1DadosPessoais({ data, onChange, errors }: Step1Props) {
+  // Função para formatar telefone com +55
+  const formatPhoneNumber = (value: string) => {
+    // Remove tudo que não é número
+    const numbers = value.replace(/\D/g, '')
+
+    // Se começar com 55, remove para não duplicar
+    const cleanNumbers = numbers.startsWith('55') ? numbers.slice(2) : numbers
+
+    // Limita a 11 dígitos (DDD + número)
+    const limitedNumbers = cleanNumbers.slice(0, 11)
+
+    // Formata: +55 (XX) XXXXX-XXXX ou +55 (XX) XXXX-XXXX
+    if (limitedNumbers.length <= 10) {
+      // Telefone fixo: +55 (XX) XXXX-XXXX
+      return limitedNumbers
+        .replace(/(\d{2})(\d)/, '+55 ($1) $2')
+        .replace(/(\d{4})(\d)/, '$1-$2')
+    } else {
+      // Celular: +55 (XX) XXXXX-XXXX
+      return limitedNumbers
+        .replace(/(\d{2})(\d)/, '+55 ($1) $2')
+        .replace(/(\d{5})(\d)/, '$1-$2')
+    }
+  }
+
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formatted = formatPhoneNumber(e.target.value)
+    onChange({ telefone: formatted })
+  }
+
   return (
     <div className="space-y-10">
       <div className="space-y-4">
@@ -94,14 +124,15 @@ export function Step1DadosPessoais({ data, onChange, errors }: Step1Props) {
           id="telefone"
           name="telefone"
           type="tel"
-          label="Telefone"
+          label="Telefone (com WhatsApp)"
           required
           leftIcon={<Phone className="h-5 w-5" />}
-          placeholder="(00) 00000-0000"
+          placeholder="+55 (00) 00000-0000"
           className="py-3 rounded-xl bg-white"
           value={data.telefone}
-          onChange={(e) => onChange({ telefone: e.target.value })}
+          onChange={handlePhoneChange}
           error={errors?.telefone}
+          helperText="Será enviado como: +55 + DDD + número"
         />
 
         {/* Cidade */}
