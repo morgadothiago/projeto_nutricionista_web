@@ -8,31 +8,57 @@ export const api = Axios.create({
 })
 
 
+/**
+ * Realiza o login do usuário
+ * @param login - Credenciais de email e senha
+ * @returns Promise com a resposta da API contendo user e token
+ */
 export async function SignIn(login: { email: string; password: string }) {
-  await api.post("/auth/login", {
+  return await api.post("/auth/login", {
     email: login.email,
     password: login.password,
   })
 }
 
+/**
+ * Registra um novo paciente
+ * @param register - Dados do formulário de registro
+ * @returns Promise com a resposta da API
+ */
 export async function Register(register: RegisterFormData) {
-  await api.post("/auth/register", {
+  // Remove formatação do telefone
+  const phoneNumbers = (register.phone || register.whatsappNumber || '').replace(/\D/g, "")
+  const internationalPhone = phoneNumbers.startsWith("55")
+    ? `+${phoneNumbers}`
+    : `+55${phoneNumbers}`
+
+  return await api.post("/auth/register", {
     name: register.name,
     email: register.email,
     password: register.password,
-    whatsappNumber: register.phone,
+    whatsappNumber: internationalPhone,
+    roles: ["paciente"],
   })
 }
 
+/**
+ * Registra um novo nutricionista
+ * @param doctor - Dados do formulário de registro do nutricionista
+ * @returns Promise com a resposta da API
+ */
 export async function RegisterDoctor(doctor: DoctorRegisterPayload) {
-  await api.post("/auth/register-doctor", {
+  // Remove formatação do telefone
+  const phoneNumbers = (doctor.whatsappNumber || '').replace(/\D/g, "")
+  const internationalPhone = phoneNumbers.startsWith("55")
+    ? `+${phoneNumbers}`
+    : `+55${phoneNumbers}`
+
+  return await api.post("/auth/register", {
     name: doctor.name,
     email: doctor.email,
-    phone: doctor.phone,
-    crn: doctor.crn,
-    especialidade: doctor.especialidade,
+    whatsappNumber: internationalPhone,
     password: doctor.password,
-    role: "nutricionista",
+    roles: ["nutricionista"],
   })
 }
 

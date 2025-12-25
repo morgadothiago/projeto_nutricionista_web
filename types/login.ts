@@ -10,15 +10,20 @@ interface ILogin {
 
 /**
  * Interface para a resposta de login da API
+ * Estrutura real retornada pelo endpoint /auth/login
  */
 export interface LoginResponse {
-  id: string
-  email: string
-  name: string
-  role: UserRole
+  user: {
+    id: string | number
+    email: string
+    name: string
+    role?: UserRole
+    roles?: UserRole[] | string
+    numero_whatsapp?: string
+    createdAt?: string
+  }
+  access_token?: string
   token?: string
-  accessToken?: string
-  refreshToken?: string
   message?: string
 }
 

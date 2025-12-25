@@ -98,6 +98,19 @@ export default function CadastroDoctorPage() {
     }
   }
 
+  const formatPhoneToInternational = (phone: string): string => {
+    // Remove tudo que não é número
+    const numbers = phone.replace(/\D/g, "")
+
+    // Se já começa com 55, retorna com +
+    if (numbers.startsWith("55")) {
+      return `+${numbers}`
+    }
+
+    // Caso contrário, adiciona +55 (código do Brasil)
+    return `+55${numbers}`
+  }
+
   const validateForm = (
     data: DoctorRegisterFormData
   ): DoctorRegisterFormErrors => {
@@ -178,15 +191,13 @@ export default function CadastroDoctorPage() {
 
     try {
       const response = await api.post(
-        "/auth/register-doctor",
+        "/auth/register",
         {
           name: registerData.name,
           email: registerData.email,
-          phone: registerData.phone,
-          crn: registerData.crn,
-          especialidade: registerData.especialidade,
+          whatsappNumber: formatPhoneToInternational(registerData.phone),
           password: registerData.password,
-          role: "nutricionista",
+          roles: ["nutricionista"],
         },
         {
           headers: {

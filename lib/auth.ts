@@ -58,7 +58,7 @@ export const authOptions: NextAuthOptions = {
                   role = user.roles[0] as UserRole
                 }
               } catch (e) {
-                // Silently handle parse error
+                console.error("Error parsing roles:", e)
               }
             }
 
@@ -70,29 +70,44 @@ export const authOptions: NextAuthOptions = {
             return {
               id: String(user.id),
               email: user.email,
-              name: user.name,
+              name: user.name || user.email.split('@')[0],
               role: role,
             }
           }
 
-          // Se falhar, retorne null
+          // Se a resposta não tiver a estrutura esperada, loga e retorna null
+          console.error("Invalid response structure from /auth/login:", response.data)
           return null
         } catch (error) {
           if (axios.isAxiosError(error)) {
             // Erro de conexão (backend não está rodando)
             if (error.code === "ECONNREFUSED" || error.code === "ERR_NETWORK") {
               throw new Error(
-                `Não foi possível conectar ao servidor de autenticação em ${api.defaults.baseURL}. Verifique se o backend está rodando.`
+                `Não foi possível conectar ao servidor de autenticação. Verifique sua conexão.`
               )
             }
 
-            const message =
-              error.response?.data?.message ||
-              error.response?.data?.error ||
-              "Credenciais inválidas"
-            throw new Error(message)
+            // Trata mensagens de erro da API
+            const errorMessage = error.response?.data?.message
+            const errorDetail = error.response?.data?.error
+            const statusCode = error.response?.status
+
+            if (statusCode === 401) {
+              throw new Error("Email ou senha incorretos")
+            }
+
+            if (statusCode === 400) {
+              throw new Error(errorMessage || "Dados inválidos")
+            }
+
+            if (statusCode === 500) {
+              throw new Error("Erro no servidor. Tente novamente mais tarde.")
+            }
+
+            throw new Error(errorMessage || errorDetail || "Erro ao fazer login")
           }
 
+          console.error("Unexpected error during login:", error)
           throw new Error("Erro ao conectar com o servidor de autenticação")
         }
       },

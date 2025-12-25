@@ -89,6 +89,19 @@ export default function CadastroPage() {
     }
   }
 
+  const formatPhoneToInternational = (phone: string): string => {
+    // Remove tudo que não é número
+    const numbers = phone.replace(/\D/g, "")
+
+    // Se já começa com 55, retorna com +
+    if (numbers.startsWith("55")) {
+      return `+${numbers}`
+    }
+
+    // Caso contrário, adiciona +55 (código do Brasil)
+    return `+55${numbers}`
+  }
+
   const validateForm = (data: RegisterFormData): RegisterFormErrors => {
     const newErrors: RegisterFormErrors = {}
 
@@ -132,12 +145,15 @@ export default function CadastroPage() {
 
     const registerData: RegisterFormData = {
       name: formData.get("name") as string,
-      phone: phone,
       whatsappNumber: formData.get("whatsappNumber") as string,
       email: formData.get("email") as string,
       password: formData.get("password") as string,
       confirmPassword: formData.get("confirmPassword") as string,
+      role: "paciente",
+
     }
+
+    console.log(registerData)
 
     // Validações
     const validationErrors = validateForm(registerData)
@@ -153,12 +169,15 @@ export default function CadastroPage() {
       return
     }
 
+    setLoading(false)
+
     try {
       const response = await api.post("/auth/register", {
         name: registerData.name,
-        whatsappNumber: registerData.whatsappNumber,
+        whatsappNumber: formatPhoneToInternational(registerData.whatsappNumber || phone),
         email: registerData.email,
         password: registerData.password,
+        roles: ["paciente"],
       })
 
       toast.success("Cadastro realizado com sucesso!", {
@@ -169,26 +188,9 @@ export default function CadastroPage() {
         router.push("/login")
       }, 2000)
     } catch (error: any) {
-      let errorMessage = "Erro ao criar conta. Tente novamente mais tarde."
-
-      // Captura mensagens de erro da API
-      if (error.response) {
-        // Tenta extrair a mensagem de erro da resposta
-        errorMessage =
-          error.response.data?.message ||
-          error.response.data?.error ||
-          error.response.data?.errors?.[0]?.message ||
-          `Erro ${error.response.status}: ${error.response.statusText}`
-      } else if (error.request) {
-        errorMessage = "Não foi possível conectar ao servidor. Verifique sua conexão."
-      } else {
-        errorMessage = error.message || errorMessage
-      }
-
-      setErrors({ general: errorMessage })
-
-      toast.error("Erro ao criar conta", {
-        description: errorMessage,
+      console.error("Erro ao registrar usuário:", error)
+      toast.error("Erro ao registrar usuário", {
+        description: "Por favor, tente novamente mais tarde.",
       })
     } finally {
       setLoading(false)

@@ -9,8 +9,6 @@ interface StatCardProps {
     value: string;
     positive: boolean;
   };
-  iconColor?: string;
-  iconBgColor?: string;
 }
 
 export function StatCard({
@@ -18,31 +16,24 @@ export function StatCard({
   value,
   icon: Icon,
   trend,
-  iconColor = "text-emerald-600",
-  iconBgColor = "bg-emerald-100",
 }: StatCardProps) {
   return (
-    <div className="bg-white rounded-xl border border-gray-200 p-6 hover:shadow-lg transition-shadow duration-300">
-      <div className="flex items-center justify-between">
+    <div className="bg-card rounded-xl border border-border p-6 shadow-card hover:shadow-hover transition-all duration-300">
+      <div className="flex items-start justify-between">
         <div className="flex-1">
-          <p className="text-sm font-medium text-gray-600 mb-1">{title}</p>
-          <p className="text-3xl font-bold text-gray-900">{value}</p>
+          <p className="text-sm text-muted-foreground font-poppins mb-1">{title}</p>
+          <p className="text-2xl font-bold text-foreground font-poppins">{value}</p>
           {trend && (
-            <div className="flex items-center mt-2">
-              <span
-                className={cn(
-                  "text-sm font-medium",
-                  trend.positive ? "text-green-600" : "text-red-600"
-                )}
-              >
-                {trend.positive ? "↑" : "↓"} {trend.value}
-              </span>
-              <span className="text-sm text-gray-500 ml-1">vs mês anterior</span>
-            </div>
+            <p className={cn(
+              "text-xs font-medium mt-2 font-poppins",
+              trend.positive ? "text-primary" : "text-destructive"
+            )}>
+              {trend.positive ? "+" : ""}{trend.value}
+            </p>
           )}
         </div>
-        <div className={cn("p-3 rounded-xl", iconBgColor)}>
-          <Icon className={cn("w-6 h-6", iconColor)} />
+        <div className="w-12 h-12 rounded-xl gradient-primary flex items-center justify-center">
+          <Icon className="w-6 h-6 text-primary-foreground" />
         </div>
       </div>
     </div>

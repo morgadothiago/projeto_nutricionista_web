@@ -35,10 +35,10 @@ export default function NutricionistaDashboard() {
 
   if (status === "loading") {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="flex flex-col items-center space-y-4">
-          <div className="w-12 h-12 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
-          <p className="text-gray-600">Carregando...</p>
+          <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+          <p className="text-muted-foreground font-poppins">Carregando...</p>
         </div>
       </div>
     )
@@ -54,31 +54,23 @@ export default function NutricionistaDashboard() {
       value: "48",
       icon: Users,
       trend: { value: "12%", positive: true },
-      iconColor: "text-blue-600",
-      iconBgColor: "bg-blue-100",
     },
     {
       title: "Consultas Hoje",
       value: "8",
       icon: Calendar,
-      iconColor: "text-emerald-600",
-      iconBgColor: "bg-emerald-100",
     },
     {
       title: "Planos Ativos",
       value: "35",
       icon: Apple,
       trend: { value: "8%", positive: true },
-      iconColor: "text-orange-600",
-      iconBgColor: "bg-orange-100",
     },
     {
       title: "Taxa de Sucesso",
       value: "94%",
       icon: TrendingUp,
       trend: { value: "3%", positive: true },
-      iconColor: "text-green-600",
-      iconBgColor: "bg-green-100",
     },
   ]
 
@@ -89,8 +81,6 @@ export default function NutricionistaDashboard() {
       description: "Maria Costa - 15:00",
       time: "Há 5 minutos",
       icon: Calendar,
-      iconColor: "text-blue-600",
-      iconBgColor: "bg-blue-100",
     },
     {
       id: "2",
@@ -98,8 +88,6 @@ export default function NutricionistaDashboard() {
       description: "João Oliveira completou o check-in",
       time: "Há 30 minutos",
       icon: CheckCircle,
-      iconColor: "text-green-600",
-      iconBgColor: "bg-green-100",
     },
     {
       id: "3",
@@ -107,8 +95,6 @@ export default function NutricionistaDashboard() {
       description: "Pedro Santos aguarda primeira consulta",
       time: "Há 1 hora",
       icon: Users,
-      iconColor: "text-purple-600",
-      iconBgColor: "bg-purple-100",
     },
   ]
 
@@ -116,10 +102,10 @@ export default function NutricionistaDashboard() {
     <DashboardLayout userName={session.user?.name || ""} userRole="nutricionista">
       {/* Welcome Section */}
       <div className="mb-8">
-        <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
+        <h1 className="text-2xl md:text-3xl font-bold text-foreground font-poppins mb-2">
           Olá, Dr(a). {session.user?.name}! 👋
         </h1>
-        <p className="text-gray-600">
+        <p className="text-muted-foreground font-poppins">
           Aqui está um resumo das suas atividades hoje.
         </p>
       </div>
@@ -139,33 +125,33 @@ export default function NutricionistaDashboard() {
         </div>
 
         {/* Quick Actions */}
-        <div className="bg-white rounded-xl border border-gray-200 p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">
+        <div className="bg-card rounded-xl border border-border p-6 shadow-card">
+          <h3 className="text-lg font-semibold text-foreground font-poppins mb-4">
             Ações Rápidas
           </h3>
           <div className="space-y-3">
-            <button className="w-full flex items-center justify-center space-x-2 px-4 py-3 bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-lg hover:from-emerald-600 hover:to-teal-700 transition-all duration-200 shadow-md hover:shadow-lg">
+            <button className="w-full flex items-center justify-center gap-2 px-4 py-3 gradient-primary text-primary-foreground rounded-lg font-medium font-poppins hover:opacity-90 shadow-card hover:shadow-hover transition-all duration-200">
               <Calendar className="w-5 h-5" />
-              <span className="font-medium">Nova Consulta</span>
+              <span>Nova Consulta</span>
             </button>
-            <button className="w-full flex items-center justify-center space-x-2 px-4 py-3 bg-white border-2 border-gray-200 text-gray-700 rounded-lg hover:border-emerald-500 hover:text-emerald-600 transition-all duration-200">
+            <button className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-card border-2 border-border text-foreground rounded-lg font-medium font-poppins hover:border-primary hover:text-primary transition-all duration-200">
               <Users className="w-5 h-5" />
-              <span className="font-medium">Adicionar Paciente</span>
+              <span>Adicionar Paciente</span>
             </button>
-            <button className="w-full flex items-center justify-center space-x-2 px-4 py-3 bg-white border-2 border-gray-200 text-gray-700 rounded-lg hover:border-emerald-500 hover:text-emerald-600 transition-all duration-200">
+            <button className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-card border-2 border-border text-foreground rounded-lg font-medium font-poppins hover:border-primary hover:text-primary transition-all duration-200">
               <Apple className="w-5 h-5" />
-              <span className="font-medium">Criar Plano</span>
+              <span>Criar Plano</span>
             </button>
           </div>
         </div>
       </div>
 
       {/* Tips Section */}
-      <div className="mt-8 bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-200 rounded-xl p-6">
-        <h3 className="text-lg font-semibold text-emerald-900 mb-2">
+      <div className="mt-8 bg-accent/20 border border-border rounded-xl p-6 shadow-card">
+        <h3 className="text-lg font-semibold text-foreground font-poppins mb-2">
           💡 Dica do Dia
         </h3>
-        <p className="text-emerald-700">
+        <p className="text-muted-foreground font-poppins">
           Mantenha seus pacientes engajados enviando mensagens de incentivo regularmente!
         </p>
       </div>

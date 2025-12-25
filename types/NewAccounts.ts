@@ -8,7 +8,7 @@ export type UserRole = "nutricionista" | "paciente" | "admin";
  */
 export interface RegisterFormData {
   name: string
-  phone: string
+
   email: string
   password: string
   confirmPassword: string
@@ -32,14 +32,14 @@ export interface RegisterFormErrors {
 
 /**
  * Interface para o payload de cadastro enviado à API
+ * Baseado na especificação real da API em /auth/register
  */
 export interface RegisterPayload {
   name: string
-  phone: string
   email: string
   password: string
-  role?: UserRole
-  whatsappNumber?: string
+  whatsappNumber: string
+  roles: UserRole[]  // Array de roles conforme esperado pela API
   crn?: string
   especialidade?: string
 }
@@ -50,9 +50,11 @@ export interface RegisterPayload {
 export interface RegisterResponse {
   id: string
   email: string
-  name?: string
-  role: UserRole
+  name: string
+  numero_whatsapp?: string
+  role?: UserRole
   message?: string
+  createdAt?: string
 }
 
 /**

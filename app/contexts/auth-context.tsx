@@ -62,26 +62,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
     setIsLoading(status === "loading")
   }, [status])
 
-  // Redireciona para dashboard específico após login bem-sucedido
-  useEffect(() => {
-    if (status === "authenticated" && session?.user?.role) {
-      const currentPath = window.location.pathname
-
-      // Só redireciona se estiver na página de login
-      if (currentPath === "/login") {
-        const userRole = session.user.role as UserRole
-
-        if (userRole === "nutricionista") {
-          router.push("/dashboard/nutricionista")
-        } else if (userRole === "paciente") {
-          router.push("/dashboard/paciente")
-        } else {
-          router.push("/dashboard")
-        }
-      }
-    }
-  }, [status, session, router])
-
   // Informações derivadas da sessão
   const isAuthenticated = !!session
   const user = session?.user || null
@@ -109,8 +89,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
         throw new Error(result.error)
       }
 
-      // O NextAuth irá atualizar automaticamente a sessão
-      // Não redirecionamos aqui, deixamos o useEffect abaixo fazer isso
+      if (result?.ok) {
+        // Login bem-sucedido - força reload completo para atualizar a sessão
+        window.location.reload()
+      }
     } catch (error) {
       throw error
     } finally {
