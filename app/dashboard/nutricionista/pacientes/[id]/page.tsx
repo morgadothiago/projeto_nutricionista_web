@@ -168,13 +168,13 @@ export default function PatientDetailsPage() {
 
   return (
     <DashboardWrapper userRole="nutricionista">
-      <div className="space-y-6">
+      <div className="space-y-4 sm:space-y-6 max-w-7xl mx-auto">
         {/* Back Button */}
         <Link
           href="/dashboard/nutricionista/pacientes"
-          className="inline-flex items-center gap-2 text-[#6B7280] hover:text-[#2DD49F] transition-colors"
+          className="inline-flex items-center gap-2 text-sm sm:text-base text-[#6B7280] hover:text-[#2DD49F] transition-colors font-medium group"
         >
-          <ArrowLeft className="w-5 h-5" />
+          <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5 group-hover:-translate-x-1 transition-transform duration-200" />
           <span>Voltar para pacientes</span>
         </Link>
 
@@ -184,13 +184,15 @@ export default function PatientDetailsPage() {
             <Loader2 className="w-8 h-8 animate-spin text-[#2DD49F]" />
           </Card>
         ) : (
-          <div className="flex items-center gap-4">
-            <div className="w-20 h-20 rounded-full bg-[#2DD49F] flex items-center justify-center flex-shrink-0">
-              <span className="text-white font-bold text-2xl">{initials}</span>
+          <div className="flex items-center gap-4 sm:gap-6">
+            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-br from-[#2DD49F] to-[#1FB87D] flex items-center justify-center flex-shrink-0 shadow-lg">
+              <span className="text-white font-bold text-xl sm:text-2xl">{initials}</span>
             </div>
-            <div>
-              <h1 className="text-3xl font-bold text-[#2E3A59]">{patient.name}</h1>
-              <p className="text-[#6B7280]">
+            <div className="flex-1 min-w-0">
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#2E3A59] truncate">
+                {patient.name}
+              </h1>
+              <p className="text-sm sm:text-base text-[#6B7280] mt-1">
                 {patient.age} anos • {patient.goal}
               </p>
             </div>
@@ -198,7 +200,7 @@ export default function PatientDetailsPage() {
         )}
 
         {/* Tabs */}
-        <div className="flex gap-2">
+        <div className="flex gap-2 overflow-x-auto pb-2 sm:pb-0 -mx-2 px-2 sm:mx-0 sm:px-0">
           {tabs.map((tab) => {
             const Icon = tab.icon
             const isActive = activeTab === tab.id
@@ -206,14 +208,14 @@ export default function PatientDetailsPage() {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center gap-2 px-6 py-3 rounded-xl font-medium transition-all ${
+                className={`flex items-center gap-2 px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl font-semibold transition-all duration-200 whitespace-nowrap ${
                   isActive
-                    ? "bg-[#2DD49F] text-white shadow-lg"
+                    ? "bg-[#2DD49F] text-white shadow-lg scale-105"
                     : "bg-white text-[#6B7280] hover:bg-gray-50 border border-gray-200"
                 }`}
               >
-                <Icon className="w-5 h-5" />
-                {tab.label}
+                <Icon className="w-4 h-4 sm:w-5 sm:h-5" />
+                <span className="text-sm sm:text-base">{tab.label}</span>
               </button>
             )
           })}
@@ -221,7 +223,7 @@ export default function PatientDetailsPage() {
 
         {/* Tab Content */}
         {activeTab === "diario" && (
-          <div className="space-y-6">
+          <div className="space-y-4 sm:space-y-6">
             {/* Daily Calories */}
             <DailyCaloriesCard
               currentCalories={dailyData.currentCalories}
@@ -231,19 +233,21 @@ export default function PatientDetailsPage() {
 
             {/* Meals */}
             <div>
-              <h2 className="text-2xl font-bold text-[#2E3A59] mb-4">Refeições de hoje</h2>
+              <h2 className="text-xl sm:text-2xl font-bold text-[#2E3A59] mb-4 sm:mb-6">
+                Refeições de hoje
+              </h2>
               {loadingMeals ? (
                 <Card className="p-12 flex items-center justify-center">
                   <Loader2 className="w-8 h-8 animate-spin text-[#2DD49F]" />
                 </Card>
               ) : meals.length === 0 ? (
-                <Card className="p-12">
-                  <p className="text-center text-[#6B7280]">
+                <Card className="p-12 sm:p-16">
+                  <p className="text-center text-[#6B7280] text-sm sm:text-base">
                     Nenhuma refeição registrada hoje.
                   </p>
                 </Card>
               ) : (
-                <div className="space-y-3">
+                <div className="space-y-3 sm:space-y-4">
                   {meals.map((meal: any, index: number) => (
                     <MealCard
                       key={index}
@@ -261,8 +265,10 @@ export default function PatientDetailsPage() {
         )}
 
         {activeTab === "evolucao" && (
-          <div className="space-y-6">
-            <h2 className="text-2xl font-bold text-[#2E3A59]">Evolução do peso</h2>
+          <div className="space-y-4 sm:space-y-6">
+            <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-[#2E3A59]">
+              Evolução do peso
+            </h2>
             {loadingWeight ? (
               <Card className="p-12 flex items-center justify-center">
                 <Loader2 className="w-8 h-8 animate-spin text-[#2DD49F]" />
@@ -278,8 +284,8 @@ export default function PatientDetailsPage() {
                 data={weightEvolution}
               />
             ) : (
-              <Card className="p-12">
-                <p className="text-center text-[#6B7280]">
+              <Card className="p-12 sm:p-16">
+                <p className="text-center text-[#6B7280] text-sm sm:text-base">
                   Nenhum dado de evolução disponível.
                 </p>
               </Card>
@@ -288,10 +294,15 @@ export default function PatientDetailsPage() {
         )}
 
         {(activeTab === "plano" || activeTab === "relatorio" || activeTab === "checkins") && (
-          <Card className="p-12">
-            <p className="text-center text-[#6B7280]">
-              Funcionalidade em desenvolvimento.
-            </p>
+          <Card className="p-12 sm:p-16 border border-gray-100 shadow-sm">
+            <div className="text-center">
+              <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-[#E6F9F0] to-[#D0F5E5] rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6">
+                <FileText className="w-8 h-8 sm:w-10 sm:h-10 text-[#2DD49F]" />
+              </div>
+              <p className="text-[#6B7280] text-sm sm:text-base">
+                Funcionalidade em desenvolvimento.
+              </p>
+            </div>
           </Card>
         )}
       </div>

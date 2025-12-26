@@ -16,19 +16,24 @@ export function MacroProgress({
   const percentage = Math.min((current / target) * 100, 100)
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-3 p-4 rounded-xl bg-gray-50/50 hover:bg-gray-50 transition-colors duration-200">
       <div className="flex items-center justify-between">
-        <span className="text-sm text-[#6B7280]">{label}</span>
+        <span className="text-sm font-semibold text-[#2E3A59]">{label}</span>
+        <span className="text-xs font-medium text-[#6B7280]">
+          {percentage.toFixed(0)}%
+        </span>
       </div>
-      <div className="relative h-2 bg-gray-100 rounded-full overflow-hidden">
+      <div className="relative h-2.5 bg-gray-200 rounded-full overflow-hidden">
         <div
-          className={cn("h-full rounded-full transition-all duration-500", color)}
+          className={cn("h-full rounded-full transition-all duration-500 ease-out", color)}
           style={{ width: `${percentage}%` }}
         />
       </div>
-      <div className="flex items-baseline gap-1">
-        <span className="text-lg font-bold text-[#FF8C42]">{current}g</span>
-        <span className="text-sm text-[#6B7280]">/ {target}g</span>
+      <div className="flex items-baseline gap-1.5">
+        <span className="text-xl sm:text-2xl font-bold text-[#2E3A59]">
+          {current}g
+        </span>
+        <span className="text-sm text-[#6B7280]">de {target}g</span>
       </div>
     </div>
   )

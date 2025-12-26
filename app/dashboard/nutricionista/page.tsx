@@ -107,11 +107,15 @@ export default function NutricionistaDashboardPage() {
 
   return (
     <DashboardWrapper userRole="nutricionista">
-      <div className="space-y-8">
+      <div className="space-y-4 sm:space-y-6 max-w-7xl mx-auto">
         {/* Header */}
-        <div>
-          <h1 className="text-4xl font-bold text-[#2E3A59]">Dashboard</h1>
-          <p className="text-[#6B7280] mt-2">Visão geral dos seus pacientes</p>
+        <div className="space-y-2">
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#2E3A59] leading-tight">
+            Dashboard
+          </h1>
+          <p className="text-base sm:text-lg text-[#6B7280]">
+            Visão geral dos seus pacientes
+          </p>
         </div>
 
         {/* Stats Cards */}
@@ -120,7 +124,7 @@ export default function NutricionistaDashboardPage() {
             <Loader2 className="w-8 h-8 animate-spin text-[#2DD49F]" />
           </Card>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
             <StatCardNutricionista
               title="Pacientes ativos"
               value={stats.activePacients}
@@ -151,7 +155,7 @@ export default function NutricionistaDashboardPage() {
         )}
 
         {/* Engagement Chart & Alerts */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-5">
           <div className="lg:col-span-2">
             {loadingEngagement ? (
               <Card className="p-12 flex items-center justify-center">

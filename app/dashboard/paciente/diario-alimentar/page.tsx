@@ -75,7 +75,7 @@ export default function DiarioAlimentarPage() {
 
   return (
     <DashboardWrapper userRole="paciente">
-      <div className="space-y-8">
+      <div className="space-y-4 sm:space-y-6 max-w-7xl mx-auto">
         {/* Header */}
         <div>
           <h1 className="text-3xl font-bold text-[#2E3A59]">

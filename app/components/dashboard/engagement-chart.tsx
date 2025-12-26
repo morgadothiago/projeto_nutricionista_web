@@ -26,19 +26,21 @@ export function EngagementChart({
   const hasData = data.length > 0 && data.some(item => item.engagement > 0)
 
   return (
-    <Card className="p-6 border border-gray-100">
-      <div className="space-y-6">
+    <Card className="p-6 sm:p-8 border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-300">
+      <div className="space-y-6 sm:space-y-8">
         {/* Header com título e tabs */}
-        <div className="flex items-center justify-between">
-          <h3 className="text-xl font-bold text-[#2E3A59]">Engajamento</h3>
-          <div className="flex gap-2">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <h3 className="text-xl sm:text-2xl font-bold text-[#2E3A59]">
+            Engajamento
+          </h3>
+          <div className="flex gap-1.5 sm:gap-2 overflow-x-auto pb-2 sm:pb-0 -mx-2 px-2 sm:mx-0 sm:px-0">
             {periods.map((p) => (
               <button
                 key={p}
                 onClick={() => setPeriod(p)}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                className={`px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all duration-200 whitespace-nowrap ${
                   period === p
-                    ? "bg-[#2DD49F] text-white"
+                    ? "bg-[#2DD49F] text-white shadow-md scale-105"
                     : "bg-gray-100 text-[#6B7280] hover:bg-gray-200"
                 }`}
               >
@@ -50,18 +52,19 @@ export function EngagementChart({
 
         {/* Gráfico ou Empty State */}
         {!hasData ? (
-          <div className="h-64 flex flex-col items-center justify-center text-center">
-            <div className="w-16 h-16 bg-[#E6F9F0] rounded-full flex items-center justify-center mb-4">
-              <Activity className="w-8 h-8 text-[#2DD49F]" />
+          <div className="h-64 sm:h-80 flex flex-col items-center justify-center text-center px-4">
+            <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-[#E6F9F0] to-[#D0F5E5] rounded-full flex items-center justify-center mb-4 sm:mb-6">
+              <Activity className="w-8 h-8 sm:w-10 sm:h-10 text-[#2DD49F]" />
             </div>
-            <p className="text-[#6B7280] text-sm">
-              Nenhum dado de engajamento disponível ainda.<br />
+            <p className="text-[#6B7280] text-sm sm:text-base max-w-md">
+              Nenhum dado de engajamento disponível ainda.
+              <br className="hidden sm:block" />
               Os dados aparecerão quando os pacientes começarem a usar o aplicativo.
             </p>
           </div>
         ) : (
           <>
-            <div className="h-64">
+            <div className="h-64 sm:h-80">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={data}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" vertical={false} />
@@ -84,9 +87,12 @@ export function EngagementChart({
                     contentStyle={{
                       backgroundColor: "white",
                       border: "1px solid #E5E7EB",
-                      borderRadius: "8px",
+                      borderRadius: "12px",
+                      boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
+                      padding: "12px",
                     }}
                     formatter={(value: number) => [`${value}%`, "Engajamento"]}
+                    labelStyle={{ color: "#2E3A59", fontWeight: "bold", marginBottom: "4px" }}
                   />
                   <Line
                     type="monotone"
@@ -94,24 +100,30 @@ export function EngagementChart({
                     stroke="#2DD49F"
                     strokeWidth={3}
                     dot={{ fill: "#2DD49F", r: 5 }}
-                    activeDot={{ r: 7 }}
+                    activeDot={{ r: 8, fill: "#1FB87D", stroke: "#fff", strokeWidth: 2 }}
                   />
                 </LineChart>
               </ResponsiveContainer>
             </div>
 
             {/* Informações abaixo do gráfico */}
-            <div className="flex items-center gap-8 text-sm text-[#6B7280]">
-              <p>
-                Engajamento da última semana:{" "}
-                <span className="font-bold text-[#2E3A59]">{weekEngagement}%</span>
-              </p>
-              <p>
-                Pacientes engajados:{" "}
-                <span className="font-bold text-[#2E3A59]">
-                  {engagedPatients} de {totalPatients}
-                </span>
-              </p>
+            <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-8 p-4 sm:p-6 bg-gradient-to-r from-[#E6F9F0]/50 to-[#D0F5E5]/50 rounded-xl">
+              <div className="flex-1">
+                <p className="text-xs sm:text-sm text-[#6B7280] mb-1">
+                  Engajamento da última semana
+                </p>
+                <p className="text-2xl sm:text-3xl font-bold text-[#2DD49F]">
+                  {weekEngagement}%
+                </p>
+              </div>
+              <div className="flex-1">
+                <p className="text-xs sm:text-sm text-[#6B7280] mb-1">
+                  Pacientes engajados
+                </p>
+                <p className="text-2xl sm:text-3xl font-bold text-[#2E3A59]">
+                  {engagedPatients} <span className="text-lg sm:text-xl text-[#6B7280]">de {totalPatients}</span>
+                </p>
+              </div>
             </div>
           </>
         )}

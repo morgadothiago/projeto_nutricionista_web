@@ -110,49 +110,52 @@ export default function PacientesPage() {
 
   return (
     <DashboardWrapper userRole="nutricionista">
-      <div className="space-y-6">
+      <div className="space-y-4 sm:space-y-6 max-w-7xl mx-auto">
         {/* Header */}
-        <div>
-          <h1 className="text-4xl font-bold text-[#2E3A59]">Pacientes</h1>
-          <p className="text-[#6B7280] mt-2">Gerencie seus pacientes</p>
+        <div className="space-y-2">
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#2E3A59] leading-tight">
+            Pacientes
+          </h1>
+          <p className="text-base sm:text-lg text-[#6B7280]">
+            Gerencie seus pacientes
+          </p>
         </div>
 
         {/* Search and Filters */}
         <div className="space-y-4">
           {/* Search Bar and Status Filters */}
-          <div className="flex items-center gap-4">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#6B7280]" />
               <Input
                 placeholder="Buscar paciente..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 h-12 bg-white border-gray-200"
+                className="pl-10 h-12 bg-white border-gray-200 rounded-xl"
               />
             </div>
-            <button className="flex items-center gap-2 px-4 py-3 bg-white border border-gray-200 rounded-xl hover:border-[#2DD49F] transition-colors">
-              <Filter className="w-5 h-5 text-[#6B7280]" />
-            </button>
-            {statusFilters.map((filter) => (
-              <button
-                key={filter.value}
-                onClick={() => setStatusFilter(filter.value)}
-                className={`px-4 py-3 rounded-xl font-medium transition-colors ${
-                  statusFilter === filter.value
-                    ? "bg-[#2DD49F] text-white"
-                    : "bg-gray-100 text-[#6B7280] hover:bg-gray-200"
-                }`}
-              >
-                {filter.label}
-              </button>
-            ))}
+            <div className="flex gap-2 overflow-x-auto pb-2 sm:pb-0 -mx-2 px-2 sm:mx-0 sm:px-0">
+              {statusFilters.map((filter) => (
+                <button
+                  key={filter.value}
+                  onClick={() => setStatusFilter(filter.value)}
+                  className={`px-4 sm:px-5 py-3 rounded-xl font-semibold transition-all duration-200 whitespace-nowrap ${
+                    statusFilter === filter.value
+                      ? "bg-[#2DD49F] text-white shadow-md scale-105"
+                      : "bg-gray-100 text-[#6B7280] hover:bg-gray-200"
+                  }`}
+                >
+                  {filter.label}
+                </button>
+              ))}
+            </div>
           </div>
 
           {/* Alert Filters */}
-          <div className="flex items-center gap-3 p-4 bg-white rounded-xl border border-gray-100">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-3 p-4 sm:p-5 bg-white rounded-xl sm:rounded-2xl border border-gray-100 shadow-sm">
             <div className="flex items-center gap-2 text-[#6B7280]">
-              <Filter className="w-4 h-4" />
-              <span className="text-sm font-medium">Filtrar por alerta</span>
+              <Filter className="w-4 h-4 sm:w-5 sm:h-5" />
+              <span className="text-sm sm:text-base font-semibold">Filtrar por alerta</span>
             </div>
             <div className="flex flex-wrap gap-2">
               {alertFilters.map((filter) => {
@@ -162,14 +165,14 @@ export default function PacientesPage() {
                   <button
                     key={filter.value}
                     onClick={() => setAlertFilter(isActive ? null : filter.value)}
-                    className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm transition-colors ${
+                    className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all duration-200 ${
                       isActive
-                        ? "bg-[#2DD49F] text-white"
+                        ? "bg-[#2DD49F] text-white shadow-md scale-105"
                         : "bg-gray-50 text-[#6B7280] hover:bg-gray-100"
                     }`}
                   >
                     <Icon className="w-4 h-4" />
-                    {filter.label}
+                    <span className="hidden sm:inline">{filter.label}</span>
                   </button>
                 )
               })}
@@ -183,9 +186,9 @@ export default function PacientesPage() {
             <Loader2 className="w-8 h-8 animate-spin text-[#2DD49F]" />
           </Card>
         ) : filteredPatients.length === 0 ? (
-          <Card className="p-12">
+          <Card className="p-12 sm:p-16">
             <div className="text-center">
-              <p className="text-[#6B7280]">
+              <p className="text-[#6B7280] text-sm sm:text-base">
                 {searchTerm || statusFilter !== "todos" || alertFilter
                   ? "Nenhum paciente encontrado com os filtros aplicados."
                   : "Você ainda não tem pacientes cadastrados."}
@@ -193,7 +196,7 @@ export default function PacientesPage() {
             </div>
           </Card>
         ) : (
-          <div className="space-y-3">
+          <div className="space-y-3 sm:space-y-4">
             {filteredPatients.map((patient: any) => (
               <PatientCard
                 key={patient.id}

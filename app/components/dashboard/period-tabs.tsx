@@ -18,16 +18,16 @@ export function PeriodTabs({ onChange }: PeriodTabsProps) {
   }
 
   return (
-    <div className="flex gap-2 bg-white p-1 rounded-xl border border-gray-100 w-fit">
+    <div className="inline-flex gap-1.5 sm:gap-2 bg-white p-1.5 sm:p-2 rounded-xl sm:rounded-2xl border border-gray-100 shadow-sm">
       {periods.map((period) => (
         <button
           key={period}
           onClick={() => handlePeriodChange(period)}
           className={cn(
-            "px-6 py-2 rounded-lg text-sm font-medium transition-all duration-200",
+            "px-4 sm:px-6 py-2 sm:py-2.5 rounded-lg sm:rounded-xl text-xs sm:text-sm font-semibold transition-all duration-200 whitespace-nowrap",
             selectedPeriod === period
-              ? "bg-[#2DD49F] text-white shadow-sm"
-              : "text-[#6B7280] hover:text-[#2E3A59]"
+              ? "bg-[#2DD49F] text-white shadow-md scale-105"
+              : "text-[#6B7280] hover:text-[#2E3A59] hover:bg-gray-50"
           )}
         >
           {period}

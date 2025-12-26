@@ -81,17 +81,19 @@ export default function PacienteDashboardPage() {
 
   return (
     <DashboardWrapper userRole="paciente">
-      <div className="space-y-8">
+      <div className="space-y-4 sm:space-y-6 max-w-7xl mx-auto">
         {/* Header */}
-        <div>
-          <h1 className="text-4xl font-bold text-[#2E3A59]">
+        <div className="space-y-2">
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#2E3A59] leading-tight">
             Olá, {firstName}!
           </h1>
-          <p className="text-[#6B7280] mt-2">Veja seu resumo de hoje</p>
+          <p className="text-base sm:text-lg text-[#6B7280]">
+            Veja seu resumo de hoje
+          </p>
         </div>
 
         {/* Quick Access Cards */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
           <QuickAccessCard
             title="Diário"
             href="/dashboard/paciente/diario-alimentar"

@@ -28,6 +28,8 @@ interface MenuItem {
 
 interface AppSidebarProps {
   userRole: "nutricionista" | "paciente"
+  isOpen?: boolean
+  onClose?: () => void
 }
 
 const MENU_ITEMS: MenuItem[] = [
@@ -87,7 +89,7 @@ const MENU_ITEMS: MenuItem[] = [
   },
 ]
 
-export function AppSidebar({ userRole }: AppSidebarProps) {
+export function AppSidebar({ userRole, isOpen = false, onClose }: AppSidebarProps) {
   const pathname = usePathname()
   const router = useRouter()
   const { logout } = useAuthContext()
@@ -106,8 +108,20 @@ export function AppSidebar({ userRole }: AppSidebarProps) {
     }
   }
 
+  const handleLinkClick = () => {
+    if (onClose) {
+      onClose()
+    }
+  }
+
   return (
-    <aside className="fixed left-0 top-0 h-screen w-64 bg-white border-r border-gray-100 flex flex-col">
+    <aside
+      className={cn(
+        "fixed left-0 top-0 h-screen w-64 bg-white border-r border-gray-100 flex flex-col z-50 transition-transform duration-300 ease-in-out",
+        "lg:translate-x-0",
+        isOpen ? "translate-x-0" : "-translate-x-full"
+      )}
+    >
       {/* Logo */}
       <div className="flex items-center gap-3 px-6 py-8">
         <Image
@@ -130,6 +144,7 @@ export function AppSidebar({ userRole }: AppSidebarProps) {
             <Link
               key={item.href}
               href={item.href}
+              onClick={handleLinkClick}
               className={cn(
                 "flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200",
                 isActive

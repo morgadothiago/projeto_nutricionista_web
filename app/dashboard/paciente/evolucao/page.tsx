@@ -50,15 +50,21 @@ export default function EvolucaoPage() {
 
   return (
     <DashboardWrapper userRole="paciente">
-      <div className="space-y-6">
+      <div className="space-y-4 sm:space-y-6 max-w-7xl mx-auto">
         {/* Header */}
-        <div>
-          <h1 className="text-3xl font-bold text-[#2E3A59]">Minha Evolução</h1>
-          <p className="text-[#6B7280] mt-2">Acompanhe seu progresso</p>
+        <div className="space-y-2">
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#2E3A59] leading-tight">
+            Minha Evolução
+          </h1>
+          <p className="text-base sm:text-lg text-[#6B7280]">
+            Acompanhe seu progresso
+          </p>
         </div>
 
         {/* Period Tabs */}
-        <PeriodTabs onChange={handlePeriodChange} />
+        <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
+          <PeriodTabs onChange={handlePeriodChange} />
+        </div>
 
         {/* Weight Evolution */}
         {loadingWeight ? (
