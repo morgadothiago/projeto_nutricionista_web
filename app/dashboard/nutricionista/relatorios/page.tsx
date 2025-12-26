@@ -19,22 +19,15 @@ export default function RelatoriosPage() {
   // Fetch dados de engajamento
   const { data: engagementDataAPI, loading } = useApi<any>(() => getEngagementData(period))
 
-  // Dados mockados
-  const mockEngagementData = {
-    data: [
-      { week: "Sem 1", engagement: 65 },
-      { week: "Sem 2", engagement: 72 },
-      { week: "Sem 3", engagement: 68 },
-      { week: "Sem 4", engagement: 78 },
-      { week: "Sem 5", engagement: 80 },
-      { week: "Sem 6", engagement: 75 },
-    ],
-    weekEngagement: 75,
-    engagedPatients: 18,
-    totalPatients: 24,
+  // Dados padrão caso a API não retorne dados
+  const defaultEngagementData = {
+    data: [],
+    weekEngagement: 0,
+    engagedPatients: 0,
+    totalPatients: 0,
   }
 
-  const engagementData = engagementDataAPI || mockEngagementData
+  const engagementData = engagementDataAPI || defaultEngagementData
 
   const periods: Period[] = ["Semanal", "30 dias", "Mensal", "Personalizado"]
 

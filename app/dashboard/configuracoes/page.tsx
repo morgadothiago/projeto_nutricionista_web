@@ -16,23 +16,32 @@ import { Card } from "@/components/ui/card"
 
 export default function ConfiguracoesPage() {
   const router = useRouter()
-  const { isAuthenticated, userRole, userName, userEmail, isLoading } = useAuthContext()
+  const { isAuthenticated, userRole, userName, userEmail, userId, isLoading } = useAuthContext()
 
   // Fetch dados do perfil
   const {
     data: profileData,
     loading: loadingProfile,
     error: errorProfile,
-  } = useApi<any>(getUserProfile)
+  } = useApi<any>(() => getUserProfile(userId || undefined))
 
-  // States para formulário
+  // States para formulário - diferentes campos para paciente e nutricionista
   const [formData, setFormData] = useState({
+    // Campos comuns
     name: "",
     email: "",
+    phone: "",
+
+    // Campos específicos de paciente
     age: "",
     height: "",
     goal: "emagrecimento",
     targetWeight: "",
+
+    // Campos específicos de nutricionista
+    crn: "",
+    specialization: "",
+    bio: "",
   })
 
   const [notifications, setNotifications] = useState({
@@ -48,12 +57,21 @@ export default function ConfiguracoesPage() {
   useEffect(() => {
     if (profileData) {
       setFormData({
+        // Campos comuns
         name: profileData.name || userName || "",
         email: profileData.email || userEmail || "",
+        phone: profileData.phone || profileData.whatsappNumber || "",
+
+        // Campos específicos de paciente
         age: profileData.age || "",
         height: profileData.height || "",
         goal: profileData.goal || "emagrecimento",
         targetWeight: profileData.targetWeight || "",
+
+        // Campos específicos de nutricionista
+        crn: profileData.crn || "",
+        specialization: profileData.specialization || "",
+        bio: profileData.bio || "",
       })
       if (profileData.notifications) {
         setNotifications(profileData.notifications)
@@ -68,16 +86,37 @@ export default function ConfiguracoesPage() {
   }, [isLoading, isAuthenticated, router])
 
   const handleSave = async () => {
+    if (!userId) {
+      alert("Erro: ID do usuário não encontrado.")
+      return
+    }
+
     setSaving(true)
     try {
-      await updateUserProfile({
+      // Campos comuns para ambos
+      const baseData = {
         name: formData.name,
         email: formData.email,
-        age: formData.age ? Number(formData.age) : undefined,
-        height: formData.height ? Number(formData.height) : undefined,
-        goal: formData.goal,
-        targetWeight: formData.targetWeight ? Number(formData.targetWeight) : undefined,
-      })
+        phone: formData.phone || undefined,
+      }
+
+      // Adiciona campos específicos baseado na role
+      const profileUpdateData = userRole === "nutricionista"
+        ? {
+            ...baseData,
+            crn: formData.crn || undefined,
+            specialization: formData.specialization || undefined,
+            bio: formData.bio || undefined,
+          }
+        : {
+            ...baseData,
+            age: formData.age ? Number(formData.age) : undefined,
+            height: formData.height ? Number(formData.height) : undefined,
+            goal: formData.goal,
+            targetWeight: formData.targetWeight ? Number(formData.targetWeight) : undefined,
+          }
+
+      await updateUserProfile(userId, profileUpdateData)
       await updateNotificationSettings(notifications)
       alert("Configurações salvas com sucesso!")
     } catch (error) {
@@ -159,75 +198,136 @@ export default function ConfiguracoesPage() {
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="age" className="text-sm text-[#6B7280] mb-2 block">
-                  Idade
-                </Label>
-                <Input
-                  id="age"
-                  type="number"
-                  value={formData.age}
-                  onChange={(e) => setFormData({ ...formData, age: e.target.value })}
-                  className="bg-gray-50 border-0"
-                />
-              </div>
-              <div>
-                <Label htmlFor="height" className="text-sm text-[#6B7280] mb-2 block">
-                  Altura (cm)
-                </Label>
-                <Input
-                  id="height"
-                  type="number"
-                  value={formData.height}
-                  onChange={(e) => setFormData({ ...formData, height: e.target.value })}
-                  className="bg-gray-50 border-0"
-                />
-              </div>
-            </div>
-          </div>
-        </SettingsSection>
-
-        {/* Objetivos Section */}
-        <SettingsSection
-          icon={Target}
-          iconColor="text-[#FF8C42]"
-          iconBgColor="bg-[#FFF3E0]"
-          title="Objetivos"
-          subtitle="Suas metas nutricionais"
-        >
-          <div className="space-y-4">
             <div>
-              <Label htmlFor="goal" className="text-sm text-[#6B7280] mb-2 block">
-                Objetivo principal
-              </Label>
-              <select
-                id="goal"
-                value={formData.goal}
-                onChange={(e) => setFormData({ ...formData, goal: e.target.value })}
-                className="w-full px-4 py-3 bg-gray-50 border-0 rounded-xl text-[#2E3A59] focus:outline-none focus:ring-2 focus:ring-[#2DD49F]"
-              >
-                <option value="emagrecimento">Emagrecimento</option>
-                <option value="ganho-massa">Ganho de massa muscular</option>
-                <option value="manutencao">Manutenção</option>
-                <option value="saude">Saúde e bem-estar</option>
-              </select>
-            </div>
-
-            <div>
-              <Label htmlFor="target-weight" className="text-sm text-[#6B7280] mb-2 block">
-                Peso meta (kg)
+              <Label htmlFor="phone" className="text-sm text-[#6B7280] mb-2 block">
+                Telefone/WhatsApp
               </Label>
               <Input
-                id="target-weight"
-                type="number"
-                value={formData.targetWeight}
-                onChange={(e) => setFormData({ ...formData, targetWeight: e.target.value })}
+                id="phone"
+                type="tel"
+                value={formData.phone}
+                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                 className="bg-gray-50 border-0"
+                placeholder="+55 (00) 00000-0000"
               />
             </div>
+
+            {/* Campos específicos para PACIENTE */}
+            {userRole === "paciente" && (
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="age" className="text-sm text-[#6B7280] mb-2 block">
+                    Idade
+                  </Label>
+                  <Input
+                    id="age"
+                    type="number"
+                    value={formData.age}
+                    onChange={(e) => setFormData({ ...formData, age: e.target.value })}
+                    className="bg-gray-50 border-0"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="height" className="text-sm text-[#6B7280] mb-2 block">
+                    Altura (cm)
+                  </Label>
+                  <Input
+                    id="height"
+                    type="number"
+                    value={formData.height}
+                    onChange={(e) => setFormData({ ...formData, height: e.target.value })}
+                    className="bg-gray-50 border-0"
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* Campos específicos para NUTRICIONISTA */}
+            {userRole === "nutricionista" && (
+              <>
+                <div>
+                  <Label htmlFor="crn" className="text-sm text-[#6B7280] mb-2 block">
+                    CRN (Registro Profissional)
+                  </Label>
+                  <Input
+                    id="crn"
+                    value={formData.crn}
+                    onChange={(e) => setFormData({ ...formData, crn: e.target.value })}
+                    className="bg-gray-50 border-0"
+                    placeholder="CRN 00000"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="specialization" className="text-sm text-[#6B7280] mb-2 block">
+                    Especialização
+                  </Label>
+                  <Input
+                    id="specialization"
+                    value={formData.specialization}
+                    onChange={(e) => setFormData({ ...formData, specialization: e.target.value })}
+                    className="bg-gray-50 border-0"
+                    placeholder="Ex: Nutrição Esportiva, Emagrecimento..."
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="bio" className="text-sm text-[#6B7280] mb-2 block">
+                    Biografia/Descrição
+                  </Label>
+                  <textarea
+                    id="bio"
+                    value={formData.bio}
+                    onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
+                    className="w-full px-4 py-3 bg-gray-50 border-0 rounded-xl text-[#2E3A59] focus:outline-none focus:ring-2 focus:ring-[#2DD49F] min-h-[100px]"
+                    placeholder="Conte um pouco sobre sua experiência profissional..."
+                  />
+                </div>
+              </>
+            )}
           </div>
         </SettingsSection>
+
+        {/* Objetivos Section - Apenas para PACIENTE */}
+        {userRole === "paciente" && (
+          <SettingsSection
+            icon={Target}
+            iconColor="text-[#FF8C42]"
+            iconBgColor="bg-[#FFF3E0]"
+            title="Objetivos"
+            subtitle="Suas metas nutricionais"
+          >
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="goal" className="text-sm text-[#6B7280] mb-2 block">
+                  Objetivo principal
+                </Label>
+                <select
+                  id="goal"
+                  value={formData.goal}
+                  onChange={(e) => setFormData({ ...formData, goal: e.target.value })}
+                  className="w-full px-4 py-3 bg-gray-50 border-0 rounded-xl text-[#2E3A59] focus:outline-none focus:ring-2 focus:ring-[#2DD49F]"
+                >
+                  <option value="emagrecimento">Emagrecimento</option>
+                  <option value="ganho-massa">Ganho de massa muscular</option>
+                  <option value="manutencao">Manutenção</option>
+                  <option value="saude">Saúde e bem-estar</option>
+                </select>
+              </div>
+
+              <div>
+                <Label htmlFor="target-weight" className="text-sm text-[#6B7280] mb-2 block">
+                  Peso meta (kg)
+                </Label>
+                <Input
+                  id="target-weight"
+                  type="number"
+                  value={formData.targetWeight}
+                  onChange={(e) => setFormData({ ...formData, targetWeight: e.target.value })}
+                  className="bg-gray-50 border-0"
+                />
+              </div>
+            </div>
+          </SettingsSection>
+        )}
 
         {/* Notificações Section */}
         <SettingsSection

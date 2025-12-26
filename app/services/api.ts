@@ -22,6 +22,9 @@ import type {
   AlertsResponse,
   PatientsResponse,
   PatientDetailsResponse,
+  ApiPatientRecord,
+  Patient,
+  AlertType,
 } from "@/types"
 import Axios, { type AxiosResponse } from "axios"
 
@@ -220,15 +223,20 @@ export async function deleteCheckin(id: string): Promise<AxiosResponse> {
 /**
  * Busca perfil do usuário
  */
-export async function getUserProfile(): Promise<AxiosResponse<ProfileResponse>> {
-  return await api.get("/profile")
+export async function getUserProfile(userId?: string): Promise<AxiosResponse<ProfileResponse>> {
+  // Se userId for fornecido, busca dados do usuário específico
+  if (userId) {
+    return await api.get(`/users/${userId}`)
+  }
+  // Fallback para endpoint genérico de perfil
+  return await api.get("/users/me")
 }
 
 /**
  * Atualiza perfil do usuário
  */
-export async function updateUserProfile(data: UpdateProfilePayload): Promise<AxiosResponse<ProfileResponse>> {
-  return await api.put("/profile", data)
+export async function updateUserProfile(userId: string, data: UpdateProfilePayload): Promise<AxiosResponse<ProfileResponse>> {
+  return await api.put(`/users/${userId}`, data)
 }
 
 /**
@@ -279,7 +287,12 @@ export async function getIntelligentAlerts(): Promise<AxiosResponse<AlertsRespon
 /**
  * Busca lista de pacientes (apenas para nutricionista)
  */
-export async function getPatients(): Promise<AxiosResponse<PatientsResponse>> {
+export async function getPatients(nutritionistId?: string): Promise<AxiosResponse<PatientsResponse>> {
+  // Se o nutritionistId for fornecido, usa o endpoint correto
+  if (nutritionistId) {
+    return await api.get(`/patients/nutritionist/${nutritionistId}`)
+  }
+  // Fallback para o endpoint antigo se não for fornecido
   return await api.get("/nutricionista/patients")
 }
 
@@ -295,4 +308,71 @@ export async function getPatient(id: string): Promise<AxiosResponse<PatientDetai
  */
 export async function createMealPlanForPatient(patientId: string, plan: MealPlanResponse["data"]): Promise<AxiosResponse> {
   return await api.post(`/nutricionista/patients/${patientId}/meal-plan`, plan)
+}
+
+// ==================== HELPERS ====================
+
+/**
+ * Transforma dados da API de pacientes para o formato esperado pela interface
+ */
+export function transformPatientData(apiPatient: ApiPatientRecord): Patient {
+  // Calcula o status baseado no último check-in
+  const getStatus = (lastCheckin?: string): "ativo" | "atencao" | "inativo" => {
+    if (!lastCheckin) return "inativo"
+
+    const lastCheckinDate = new Date(lastCheckin)
+    const now = new Date()
+    const diffInDays = Math.floor((now.getTime() - lastCheckinDate.getTime()) / (1000 * 60 * 60 * 24))
+
+    if (diffInDays <= 3) return "ativo"
+    if (diffInDays <= 14) return "atencao"
+    return "inativo"
+  }
+
+  // Formata a data do último check-in
+  const formatLastCheckin = (lastCheckin?: string): string => {
+    if (!lastCheckin) return "Nunca"
+
+    const lastCheckinDate = new Date(lastCheckin)
+    const now = new Date()
+    const diffInMs = now.getTime() - lastCheckinDate.getTime()
+    const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24))
+
+    if (diffInDays === 0) return "Hoje"
+    if (diffInDays === 1) return "Ontem"
+    if (diffInDays < 7) return `Há ${diffInDays} dias`
+    if (diffInDays < 30) return `Há ${Math.floor(diffInDays / 7)} semanas`
+    return `Há ${Math.floor(diffInDays / 30)} meses`
+  }
+
+  // Determina alertas baseado no status e dados
+  const getAlerts = (status: string): AlertType[] => {
+    const alerts: AlertType[] = []
+
+    if (status === "inativo") {
+      alerts.push("sem-checkin")
+    }
+    if (status === "atencao") {
+      alerts.push("baixo-engajamento")
+    }
+
+    return alerts
+  }
+
+  const lastCheckin = apiPatient.updatedAt || apiPatient.createdAt
+  const status = getStatus(lastCheckin)
+
+  return {
+    id: apiPatient.id || apiPatient.userId,
+    name: apiPatient.name || "Paciente",
+    email: apiPatient.email || "",
+    phone: apiPatient.phone,
+    age: apiPatient.age,
+    goal: apiPatient.goals?.[0] || "",
+    lastCheckin: formatLastCheckin(lastCheckin),
+    status,
+    alerts: getAlerts(status),
+    avatar: apiPatient.avatar,
+    createdAt: apiPatient.createdAt,
+  }
 }

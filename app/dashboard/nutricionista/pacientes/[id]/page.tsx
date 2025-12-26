@@ -29,116 +29,20 @@ export default function PatientDetailsPage() {
   const { data: mealsData, loading: loadingMeals } = useApi<any>(getMeals)
   const { data: weightData, loading: loadingWeight } = useApi<any>(() => getWeightEvolution())
 
-  // Dados mockados
-  const mockPatient = {
-    name: "Maria Silva",
-    age: 32,
-    goal: "Emagrecimento",
+  // Dados padrão caso a API não retorne
+  const defaultPatient = {
+    name: "Carregando...",
+    age: 0,
+    goal: "",
   }
 
-  const mockMeals = [
-    {
-      time: "07:00",
-      name: "Café da manhã",
-      foodCount: 4,
-      calories: 450,
-      foods: [
-        {
-          name: "Pão integral",
-          portion: "2 fatias (50g)",
-          carbs: 22,
-          protein: 4,
-          fat: 1,
-          calories: 120,
-        },
-        {
-          name: "Ovo mexido",
-          portion: "2 unidades",
-          carbs: 1,
-          protein: 12,
-          fat: 14,
-          calories: 180,
-        },
-        {
-          name: "Suco de laranja",
-          portion: "200ml",
-          carbs: 21,
-          protein: 1,
-          fat: 0,
-          calories: 90,
-        },
-        {
-          name: "Queijo cottage",
-          portion: "30g",
-          carbs: 1,
-          protein: 7,
-          fat: 3,
-          calories: 60,
-        },
-      ],
-    },
-    {
-      time: "12:30",
-      name: "Almoço",
-      foodCount: 5,
-      calories: 720,
-      foods: [
-        {
-          name: "Arroz integral",
-          portion: "4 colheres (100g)",
-          carbs: 23,
-          protein: 3,
-          fat: 1,
-          calories: 112,
-        },
-        {
-          name: "Feijão preto",
-          portion: "1 concha (86g)",
-          carbs: 14,
-          protein: 5,
-          fat: 0,
-          calories: 77,
-        },
-        {
-          name: "Peito de frango grelhado",
-          portion: "150g",
-          carbs: 0,
-          protein: 47,
-          fat: 4,
-          calories: 231,
-        },
-        {
-          name: "Salada verde",
-          portion: "1 prato",
-          carbs: 5,
-          protein: 2,
-          fat: 7,
-          calories: 90,
-        },
-        {
-          name: "Batata doce",
-          portion: "1 unidade média (150g)",
-          carbs: 30,
-          protein: 2,
-          fat: 0,
-          calories: 130,
-        },
-      ],
-    },
-  ]
+  const defaultMeals: any[] = []
 
-  const mockWeightData = [
-    { date: "01/11", weight: 72.5 },
-    { date: "08/11", weight: 72.0 },
-    { date: "15/11", weight: 71.5 },
-    { date: "22/11", weight: 71.2 },
-    { date: "29/11", weight: 71.0 },
-    { date: "06/12", weight: 70.8 },
-  ]
+  const defaultWeightData: any[] = []
 
-  const patient = patientData || mockPatient
-  const meals = mealsData || mockMeals
-  const weightEvolution = weightData?.data || mockWeightData
+  const patient = patientData || defaultPatient
+  const meals = mealsData || defaultMeals
+  const weightEvolution = weightData?.data || defaultWeightData
 
   const initials = patient.name
     .split(" ")

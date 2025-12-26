@@ -259,6 +259,25 @@ export interface AlertsResponse {
 // Nutricionista - Patients
 export type PatientStatus = "ativo" | "atencao" | "inativo"
 
+// Tipo para dados brutos da API (tabela patients)
+export interface ApiPatientRecord {
+  id: string
+  userId: string
+  assignedNutritionistId: string
+  healthMetrics: unknown[]
+  mealLogs: unknown[]
+  reminders: unknown[]
+  goals: string[]
+  createdAt: string
+  updatedAt: string
+  // Dados do usuário (se populado via JOIN ou endpoint separado)
+  name?: string
+  email?: string
+  phone?: string
+  age?: number
+  avatar?: string
+}
+
 export interface Patient {
   id: string
   name: string

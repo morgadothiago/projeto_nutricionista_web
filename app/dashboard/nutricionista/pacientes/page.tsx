@@ -7,73 +7,36 @@ import { PatientCard } from "@/app/components/dashboard/patient-card"
 import { Input } from "@/components/ui/input"
 import { Search, Filter, TrendingDown, TrendingUp, Activity, Weight, Target, Calendar } from "lucide-react"
 import { useApi } from "@/app/hooks/useApi"
-import { getPatients } from "@/app/services/api"
+import { getPatients, transformPatientData } from "@/app/services/api"
 import { Loader2 } from "lucide-react"
 import { Card } from "@/components/ui/card"
+import type { ApiPatientRecord, Patient, PatientsResponse } from "@/types"
 
 type StatusFilter = "todos" | "ativos" | "atencao" | "inativos"
 type AlertFilter = "baixo-engajamento" | "excesso-calorias" | "deficit-calorico" | "peso-inconsistente" | "meta-nao-atingida" | "sem-checkin" | null
 
 export default function PacientesPage() {
-  useRequireNutricionista()
+  const auth = useRequireNutricionista()
 
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("todos")
   const [alertFilter, setAlertFilter] = useState<AlertFilter>(null)
 
-  // Fetch pacientes da API
-  const { data: patientsData, loading, error } = useApi<any>(getPatients)
+  // Fetch pacientes da API usando o ID do nutricionista logado
+  const { data: patientsResponse, loading, error } = useApi<PatientsResponse>(() => getPatients(auth.userId || ""))
 
-  // Dados mockados enquanto o backend não implementa o endpoint
-  const mockPatients = [
-    {
-      id: "1",
-      name: "Maria Silva",
-      lastCheckin: "Hoje",
-      status: "ativo" as const,
-      alerts: [],
-    },
-    {
-      id: "2",
-      name: "João Santos",
-      lastCheckin: "Ontem",
-      status: "ativo" as const,
-      alerts: [],
-    },
-    {
-      id: "3",
-      name: "Ana Costa",
-      lastCheckin: "Há 3 dias",
-      status: "atencao" as const,
-      alerts: ["baixo-engajamento"],
-    },
-    {
-      id: "4",
-      name: "Pedro Lima",
-      lastCheckin: "Há 1 semana",
-      status: "atencao" as const,
-      alerts: ["sem-checkin"],
-    },
-    {
-      id: "5",
-      name: "Carla Souza",
-      lastCheckin: "Hoje",
-      status: "ativo" as const,
-      alerts: [],
-    },
-    {
-      id: "6",
-      name: "Lucas Oliveira",
-      lastCheckin: "Há 2 semanas",
-      status: "inativo" as const,
-      alerts: ["sem-checkin"],
-    },
-  ]
+  // Transforma os dados da API para o formato esperado
+  // A API pode retornar PatientsResponse (formato estruturado) ou ApiPatientRecord[] (array direto)
+  const patientsData = patientsResponse && 'data' in patientsResponse && patientsResponse.data
+    ? patientsResponse.data.patients as unknown as ApiPatientRecord[]
+    : (patientsResponse as unknown as ApiPatientRecord[] || [])
 
-  const patients = patientsData?.patients || mockPatients
+  const patients = Array.isArray(patientsData)
+    ? patientsData.map((patient) => transformPatientData(patient))
+    : []
 
   // Filtrar pacientes
-  const filteredPatients = patients.filter((patient: any) => {
+  const filteredPatients = patients.filter((patient: Patient) => {
     // Filtro de busca
     if (searchTerm && !patient.name.toLowerCase().includes(searchTerm.toLowerCase())) {
       return false
@@ -197,7 +160,7 @@ export default function PacientesPage() {
           </Card>
         ) : (
           <div className="space-y-3 sm:space-y-4">
-            {filteredPatients.map((patient: any) => (
+            {filteredPatients.map((patient: Patient) => (
               <PatientCard
                 key={patient.id}
                 id={patient.id}

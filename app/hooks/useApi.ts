@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react"
-import { AxiosError } from "axios"
+import { AxiosError, AxiosResponse } from "axios"
 
 interface UseApiState<T> {
   data: T | null
@@ -12,7 +12,7 @@ interface UseApiOptions {
 }
 
 export function useApi<T>(
-  apiFunction: () => Promise<any>,
+  apiFunction: () => Promise<AxiosResponse<T>>,
   options: UseApiOptions = {}
 ) {
   const [state, setState] = useState<UseApiState<T>>({

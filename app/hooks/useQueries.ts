@@ -237,14 +237,16 @@ export function useNutritionistNotes(
 // ==================== PROFILE QUERIES ====================
 
 export function useProfile(
+  userId?: string,
   options?: Omit<UseQueryOptions<ProfileResponse>, "queryKey" | "queryFn">
 ) {
   return useQuery({
     queryKey: queryKeys.profile(),
     queryFn: async () => {
-      const response = await api.getUserProfile()
+      const response = await api.getUserProfile(userId)
       return response.data
     },
+    enabled: !!userId,
     ...options,
   })
 }
@@ -253,7 +255,8 @@ export function useUpdateProfile() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: (data: UpdateProfilePayload) => api.updateUserProfile(data),
+    mutationFn: ({ userId, data }: { userId: string; data: UpdateProfilePayload }) =>
+      api.updateUserProfile(userId, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.profile() })
     },
