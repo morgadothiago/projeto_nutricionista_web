@@ -8,9 +8,12 @@ export const api = Axios.create({
 
 // Interceptor para adicionar token de autenticação
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem("token")
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`
+  // Verifica se está no browser antes de acessar localStorage
+  if (typeof window !== "undefined") {
+    const token = localStorage.getItem("token")
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`
+    }
   }
   return config
 })
@@ -252,6 +255,27 @@ export async function changePassword(data: {
 }
 
 // ==================== NUTRICIONISTA ====================
+
+/**
+ * Busca estatísticas do dashboard do nutricionista
+ */
+export async function getNutricionistaDashboardStats() {
+  return await api.get("/analytics/dashboard")
+}
+
+/**
+ * Busca dados de engajamento dos pacientes
+ */
+export async function getEngagementData(period: string = "weekly") {
+  return await api.get("/nutricionista/dashboard/engagement", { params: { period } })
+}
+
+/**
+ * Busca alertas inteligentes
+ */
+export async function getIntelligentAlerts() {
+  return await api.get("/nutricionista/dashboard/alerts")
+}
 
 /**
  * Busca lista de pacientes (apenas para nutricionista)

@@ -97,6 +97,10 @@ export const authOptions: NextAuthOptions = {
             }
 
             if (statusCode === 400) {
+              // Trata mensagens de validação do backend
+              if (Array.isArray(errorMessage)) {
+                throw new Error(errorMessage.join(", "))
+              }
               throw new Error(errorMessage || "Dados inválidos")
             }
 
