@@ -11,6 +11,9 @@ import {
   ClipboardCheck,
   Settings,
   LogOut,
+  LayoutDashboard,
+  Users,
+  BarChart,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useAuthContext } from "@/app/contexts/auth-context"
@@ -35,9 +38,9 @@ const MENU_ITEMS: MenuItem[] = [
     roles: ["paciente"],
   },
   {
-    label: "Home",
+    label: "Dashboard",
     href: "/dashboard/nutricionista",
-    icon: Home,
+    icon: LayoutDashboard,
     roles: ["nutricionista"],
   },
   {
@@ -67,19 +70,13 @@ const MENU_ITEMS: MenuItem[] = [
   {
     label: "Pacientes",
     href: "/dashboard/nutricionista/pacientes",
-    icon: BookOpen,
+    icon: Users,
     roles: ["nutricionista"],
   },
   {
-    label: "Planos",
-    href: "/dashboard/nutricionista/planos",
-    icon: UtensilsCrossed,
-    roles: ["nutricionista"],
-  },
-  {
-    label: "Consultas",
-    href: "/dashboard/nutricionista/consultas",
-    icon: ClipboardCheck,
+    label: "Relatórios",
+    href: "/dashboard/nutricionista/relatorios",
+    icon: BarChart,
     roles: ["nutricionista"],
   },
   {
