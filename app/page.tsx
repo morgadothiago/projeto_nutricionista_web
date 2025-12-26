@@ -60,7 +60,7 @@ export default function Home() {
       if (userRole === "nutricionista") {
         router.push("/dashboard/nutricionista")
       } else if (userRole === "paciente") {
-        router.push("/dashboard/paciente")
+        router.push("/dashboard/pacients")
       } else {
         router.push("/dashboard")
       }

@@ -1,169 +1,143 @@
 "use client"
 
 import { useEffect } from "react"
-import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
-import { DashboardLayout } from "@/app/components/dashboard/dashboard-layout"
-import { StatCard } from "@/app/components/dashboard/stat-card"
-import { ActivityCard } from "@/app/components/dashboard/activity-card"
+import { useAuthContext } from "@/app/contexts/auth-context"
+import { DashboardWrapper } from "@/app/components/dashboard/dashboard-wrapper"
+import { QuickAccessCard } from "@/app/components/dashboard/quick-access-card"
+import { DailyCaloriesCard } from "@/app/components/dashboard/daily-calories-card"
+import { TipOfTheDay } from "@/app/components/dashboard/tip-of-the-day"
+import { useApi } from "@/app/hooks/useApi"
+import { getDailySummary, getTipOfTheDay } from "@/app/services/api"
 import {
-  Calendar,
-  Apple,
-  CheckCircle,
-  Clock,
-  Heart,
-  Target,
+  BookOpen,
+  UtensilsCrossed,
   TrendingUp,
+  ClipboardCheck,
+  Loader2,
+  AlertCircle,
 } from "lucide-react"
-import { ProfileCompletion } from "@/app/components/profile/profile-completion"
+import { Card } from "@/components/ui/card"
 
-export default function PacienteDashboard() {
-  const { data: session, status } = useSession()
+export default function PacienteDashboardPage() {
   const router = useRouter()
+  const { isAuthenticated, userRole, userName, userId, isLoading } = useAuthContext()
 
-  // Proteção de rota e verificação de role
+  // Fetch dados da API
+  const {
+    data: dailySummary,
+    loading: loadingSummary,
+    error: errorSummary,
+  } = useApi<any>(() => getDailySummary(userId || ""), { skip: !userId })
+
+  const {
+    data: tip,
+    loading: loadingTip,
+    error: errorTip,
+  } = useApi<any>(getTipOfTheDay)
+
   useEffect(() => {
-    if (status === "loading") return
-
-    if (!session) {
-      router.push("/login")
-      return
+    if (!isLoading) {
+      if (!isAuthenticated) {
+        router.push("/login")
+      } else if (userRole !== "paciente") {
+        // Redireciona se não for paciente
+        if (userRole === "nutricionista") {
+          router.push("/dashboard/nutricionista")
+        }
+      }
     }
+  }, [isLoading, isAuthenticated, userRole, router])
 
-    // Redireciona se não for paciente
-    if (session.user?.role !== "paciente") {
-      router.push("/dashboard/nutricionista")
-    }
-  }, [session, status, router])
-
-  if (status === "loading") {
+  if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="flex flex-col items-center space-y-4">
-          <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
-          <p className="text-muted-foreground font-poppins">Carregando...</p>
-        </div>
+      <div className="flex items-center justify-center min-h-screen">
+        <Loader2 className="w-8 h-8 animate-spin text-[#2DD49F]" />
       </div>
     )
   }
 
-  if (!session || session.user?.role !== "paciente") {
+  if (!isAuthenticated || userRole !== "paciente") {
     return null
   }
 
-  const pacienteStats = [
-    {
-      title: "Meta de Peso",
-      value: "75kg",
-      icon: Target,
-    },
-    {
-      title: "Próxima Consulta",
-      value: "3 dias",
-      icon: Calendar,
-    },
-    {
-      title: "Refeições Hoje",
-      value: "3/5",
-      icon: Apple,
-    },
-    {
-      title: "Saúde Geral",
-      value: "Ótima",
-      icon: Heart,
-    },
-  ]
+  const firstName = userName?.split(" ")[0] || "Usuário"
 
-  const pacienteActivities = [
-    {
-      id: "1",
-      title: "Refeição registrada",
-      description: "Café da manhã - 350 kcal",
-      time: "Há 2 horas",
-      icon: Apple,
+  // Dados padrão caso a API não esteja disponível
+  const defaultData = {
+    currentCalories: 0,
+    targetCalories: 2200,
+    macros: {
+      carbs: { current: 0, target: 280 },
+      protein: { current: 0, target: 120 },
+      fat: { current: 0, target: 70 },
     },
-    {
-      id: "2",
-      title: "Meta de água atingida",
-      description: "2L de água consumidos hoje",
-      time: "Há 4 horas",
-      icon: CheckCircle,
-    },
-    {
-      id: "3",
-      title: "Lembrete de consulta",
-      description: "Sua próxima consulta é em 3 dias",
-      time: "Há 6 horas",
-      icon: Clock,
-    },
-  ]
+  }
+
+  const dailyData = dailySummary || defaultData
+  const tipOfTheDay =
+    tip?.tip ||
+    "Conecte-se com a API para receber dicas personalizadas do seu nutricionista."
 
   return (
-    <DashboardLayout userName={session.user?.name || ""} userRole="paciente">
-      {/* Welcome Section */}
-      <div className="mb-8">
-        <h1 className="text-2xl md:text-3xl font-bold text-foreground font-poppins mb-2">
-          Olá, {session.user?.name}! 👋
-        </h1>
-        <p className="text-muted-foreground font-poppins">
-          Acompanhe seu progresso e mantenha-se motivado!
-        </p>
-      </div>
-
-      {/* Profile Completion */}
-      <div className="mb-8 bg-card rounded-xl border border-border p-6">
-        <ProfileCompletion
-          percentage={65}
-          label="Complete seu perfil nutricional"
-          size="md"
-        />
-      </div>
-
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mb-8">
-        {pacienteStats.map((stat, index) => (
-          <StatCard key={index} {...stat} />
-        ))}
-      </div>
-
-      {/* Main Content Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Activities */}
-        <div className="lg:col-span-2">
-          <ActivityCard activities={pacienteActivities} />
+    <DashboardWrapper userRole="paciente">
+      <div className="space-y-8">
+        {/* Header */}
+        <div>
+          <h1 className="text-4xl font-bold text-[#2E3A59]">
+            Olá, {firstName}!
+          </h1>
+          <p className="text-[#6B7280] mt-2">Veja seu resumo de hoje</p>
         </div>
 
-        {/* Quick Actions */}
-        <div className="bg-card rounded-xl border border-border p-6">
-          <h3 className="text-lg font-semibold text-foreground mb-4">
-            Ações Rápidas
-          </h3>
-          <div className="space-y-3">
-            <button className="w-full flex items-center justify-center space-x-2 px-4 py-3 gradient-primary text-white rounded-lg hover:from-emerald-600 hover:to-teal-700 transition-all duration-200 shadow-md hover:shadow-lg">
-              <Apple className="w-5 h-5" />
-              <span className="font-medium">Registrar Refeição</span>
-            </button>
-            <button className="w-full flex items-center justify-center space-x-2 px-4 py-3 bg-card border-2 border-border text-gray-700 rounded-lg hover:border-emerald-500 hover:text-emerald-600 transition-all duration-200">
-              <Calendar className="w-5 h-5" />
-              <span className="font-medium">Ver Consultas</span>
-            </button>
-            <button className="w-full flex items-center justify-center space-x-2 px-4 py-3 bg-card border-2 border-border text-gray-700 rounded-lg hover:border-emerald-500 hover:text-emerald-600 transition-all duration-200">
-              <TrendingUp className="w-5 h-5" />
-              <span className="font-medium">Meu Progresso</span>
-            </button>
-          </div>
+        {/* Quick Access Cards */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <QuickAccessCard
+            title="Diário"
+            href="/dashboard/paciente/diario-alimentar"
+            icon={BookOpen}
+            iconColor="text-[#2DD49F]"
+            iconBgColor="bg-[#E6F9F0]"
+          />
+          <QuickAccessCard
+            title="Meu Plano"
+            href="/dashboard/paciente/plano-alimentar"
+            icon={UtensilsCrossed}
+            iconColor="text-[#FF8C42]"
+            iconBgColor="bg-[#FFF3E0]"
+          />
+          <QuickAccessCard
+            title="Evolução"
+            href="/dashboard/paciente/evolucao"
+            icon={TrendingUp}
+            iconColor="text-[#4A90E2]"
+            iconBgColor="bg-[#E3F2FD]"
+          />
+          <QuickAccessCard
+            title="Check-ins"
+            href="/dashboard/paciente/checkins"
+            icon={ClipboardCheck}
+            iconColor="text-[#9B59B6]"
+            iconBgColor="bg-[#F3E5F5]"
+          />
         </div>
-      </div>
 
-      {/* Tips Section */}
-      <div className="mt-8 bg-gradient-to-r accent/20 border border-border rounded-xl p-6">
-        <h3 className="text-lg font-semibold text-foreground mb-2">
-          💡 Dica do Dia
-        </h3>
-        <p className="text-muted-foreground font-poppins">
-          Beba pelo menos 2 litros de água por dia para manter-se hidratado e saudável!
-        </p>
+        {/* Daily Calories Card */}
+        {loadingSummary ? (
+          <Card className="p-12 flex items-center justify-center">
+            <Loader2 className="w-8 h-8 animate-spin text-[#2DD49F]" />
+          </Card>
+        ) : (
+          <DailyCaloriesCard
+            currentCalories={dailyData.currentCalories}
+            targetCalories={dailyData.targetCalories}
+            macros={dailyData.macros}
+          />
+        )}
+
+        {/* Tip of the Day */}
+        <TipOfTheDay tip={tipOfTheDay} />
       </div>
-    </DashboardLayout>
+    </DashboardWrapper>
   )
 }
