@@ -3,6 +3,7 @@ import { Poppins } from "next/font/google"
 import "./globals.css"
 import { SessionProvider } from "@/app/components/providers/session-provider"
 import { AuthProvider } from "@/app/contexts/auth-context"
+import { QueryProvider } from "@/app/providers/query-provider"
 import { Toaster } from "sonner"
 import { HydrationErrorSuppressor } from "./components/HydrationErrorSuppressor"
 
@@ -55,12 +56,14 @@ export default function RootLayout({
         suppressHydrationWarning
       >
         <HydrationErrorSuppressor />
-        <SessionProvider>
-          <AuthProvider>
-            {children}
-            <Toaster position="top-right" richColors closeButton />
-          </AuthProvider>
-        </SessionProvider>
+        <QueryProvider>
+          <SessionProvider>
+            <AuthProvider>
+              {children}
+              <Toaster position="top-right" richColors closeButton />
+            </AuthProvider>
+          </SessionProvider>
+        </QueryProvider>
       </body>
     </html>
   )

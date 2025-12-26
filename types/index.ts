@@ -91,3 +91,6 @@ export interface ApiResponse<T = unknown> {
   error?: ApiError;
   success: boolean;
 }
+
+// Re-exporta todos os tipos de API
+export * from "./api"

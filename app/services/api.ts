@@ -1,9 +1,32 @@
 import { DoctorRegisterPayload, RegisterFormData } from "@/types"
 import type { AnamneseFormData } from "@/types/anamnese"
-import Axios from "axios"
+import type {
+  DailySummaryResponse,
+  TipOfTheDayResponse,
+  MealsResponse,
+  CreateMealPayload,
+  UpdateMealPayload,
+  MealPlanResponse,
+  SubstitutionsResponse,
+  NutritionistNotesResponse,
+  WeightEvolutionResponse,
+  CaloriesEvolutionResponse,
+  CheckinsResponse,
+  CreateCheckinPayload,
+  ProfileResponse,
+  UpdateProfilePayload,
+  NotificationSettingsResponse,
+  ChangePasswordPayload,
+  DashboardStatsResponse,
+  EngagementResponse,
+  AlertsResponse,
+  PatientsResponse,
+  PatientDetailsResponse,
+} from "@/types"
+import Axios, { type AxiosResponse } from "axios"
 
 export const api = Axios.create({
-  baseURL: "https://back-st1k.onrender.com",
+  baseURL: process.env.NEXT_PUBLIC_API_URL || "https://back-st1k.onrender.com",
 })
 
 // Interceptor para adicionar token de autenticação
@@ -81,14 +104,14 @@ export async function SubmitAnamnesePublic(data: AnamneseFormData) {
 /**
  * Busca resumo diário do paciente (calorias, macros)
  */
-export async function getDailySummary(pacientId: string) {
+export async function getDailySummary(pacientId: string): Promise<AxiosResponse<DailySummaryResponse>> {
   return await api.get(`/metas-nutricionais/paciente/${pacientId}/resumo-diario`)
 }
 
 /**
  * Busca dica do dia
  */
-export async function getTipOfTheDay() {
+export async function getTipOfTheDay(): Promise<AxiosResponse<TipOfTheDayResponse>> {
   return await api.get("/dashboard/tip-of-day")
 }
 
@@ -97,7 +120,7 @@ export async function getTipOfTheDay() {
 /**
  * Busca refeições do dia
  */
-export async function getMeals(date?: string) {
+export async function getMeals(date?: string): Promise<AxiosResponse<MealsResponse>> {
   const params = date ? { date } : {}
   return await api.get("/alimentos", { params })
 }
@@ -105,32 +128,21 @@ export async function getMeals(date?: string) {
 /**
  * Cria uma nova refeição
  */
-export async function createMeal(meal: {
-  time: string
-  name: string
-  foods: Array<{
-    name: string
-    portion: string
-    carbs: number
-    protein: number
-    fat: number
-    calories: number
-  }>
-}) {
+export async function createMeal(meal: CreateMealPayload): Promise<AxiosResponse> {
   return await api.post("/alimentos", meal)
 }
 
 /**
  * Atualiza uma refeição
  */
-export async function updateMeal(id: string, meal: any) {
+export async function updateMeal(id: string, meal: UpdateMealPayload): Promise<AxiosResponse> {
   return await api.put(`/alimentos/${id}`, meal)
 }
 
 /**
  * Deleta uma refeição
  */
-export async function deleteMeal(id: string) {
+export async function deleteMeal(id: string): Promise<AxiosResponse> {
   return await api.delete(`/alimentos/${id}`)
 }
 
@@ -139,21 +151,21 @@ export async function deleteMeal(id: string) {
 /**
  * Busca plano alimentar do paciente
  */
-export async function getMealPlan() {
+export async function getMealPlan(): Promise<AxiosResponse<MealPlanResponse>> {
   return await api.get("/meal-plan")
 }
 
 /**
  * Busca substituições permitidas
  */
-export async function getSubstitutions() {
+export async function getSubstitutions(): Promise<AxiosResponse<SubstitutionsResponse>> {
   return await api.get("/meal-plan/substitutions")
 }
 
 /**
  * Busca observações do nutricionista
  */
-export async function getNutritionistNotes() {
+export async function getNutritionistNotes(): Promise<AxiosResponse<NutritionistNotesResponse>> {
   return await api.get("/meal-plan/notes")
 }
 
@@ -162,14 +174,14 @@ export async function getNutritionistNotes() {
 /**
  * Busca dados de evolução de peso
  */
-export async function getWeightEvolution(period: string = "30D") {
+export async function getWeightEvolution(period: string = "30D"): Promise<AxiosResponse<WeightEvolutionResponse>> {
   return await api.get("/evolution/weight", { params: { period } })
 }
 
 /**
  * Busca dados de calorias vs meta
  */
-export async function getCaloriesEvolution(period: string = "30D") {
+export async function getCaloriesEvolution(period: string = "30D"): Promise<AxiosResponse<CaloriesEvolutionResponse>> {
   return await api.get("/evolution/calories", { params: { period } })
 }
 
@@ -178,34 +190,28 @@ export async function getCaloriesEvolution(period: string = "30D") {
 /**
  * Busca histórico de check-ins
  */
-export async function getCheckins() {
+export async function getCheckins(): Promise<AxiosResponse<CheckinsResponse>> {
   return await api.get("/checkins")
 }
 
 /**
  * Cria um novo check-in
  */
-export async function createCheckin(data: {
-  weight: number
-  waist: number
-  hip: number
-  bodyFat: number
-  notes: string
-}) {
+export async function createCheckin(data: CreateCheckinPayload): Promise<AxiosResponse> {
   return await api.post("/checkins", data)
 }
 
 /**
  * Atualiza um check-in
  */
-export async function updateCheckin(id: string, data: any) {
+export async function updateCheckin(id: string, data: Partial<CreateCheckinPayload>): Promise<AxiosResponse> {
   return await api.put(`/checkins/${id}`, data)
 }
 
 /**
  * Deleta um check-in
  */
-export async function deleteCheckin(id: string) {
+export async function deleteCheckin(id: string): Promise<AxiosResponse> {
   return await api.delete(`/checkins/${id}`)
 }
 
@@ -214,43 +220,36 @@ export async function deleteCheckin(id: string) {
 /**
  * Busca perfil do usuário
  */
-export async function getUserProfile() {
+export async function getUserProfile(): Promise<AxiosResponse<ProfileResponse>> {
   return await api.get("/profile")
 }
 
 /**
  * Atualiza perfil do usuário
  */
-export async function updateUserProfile(data: {
-  name?: string
-  email?: string
-  age?: number
-  height?: number
-  goal?: string
-  targetWeight?: number
-}) {
+export async function updateUserProfile(data: UpdateProfilePayload): Promise<AxiosResponse<ProfileResponse>> {
   return await api.put("/profile", data)
 }
 
 /**
  * Atualiza configurações de notificação
  */
-export async function updateNotificationSettings(settings: {
+export async function updateNotificationSettings(settings: Partial<{
+  emailNotifications?: boolean
+  pushNotifications?: boolean
+  reminderTime?: string
   mealReminders?: boolean
   waterReminders?: boolean
   dailySummary?: boolean
   planUpdates?: boolean
-}) {
+}>): Promise<AxiosResponse<NotificationSettingsResponse>> {
   return await api.put("/profile/notifications", settings)
 }
 
 /**
  * Altera senha
  */
-export async function changePassword(data: {
-  currentPassword: string
-  newPassword: string
-}) {
+export async function changePassword(data: ChangePasswordPayload): Promise<AxiosResponse> {
   return await api.post("/profile/change-password", data)
 }
 
@@ -259,41 +258,41 @@ export async function changePassword(data: {
 /**
  * Busca estatísticas do dashboard do nutricionista
  */
-export async function getNutricionistaDashboardStats() {
+export async function getNutricionistaDashboardStats(): Promise<AxiosResponse<DashboardStatsResponse>> {
   return await api.get("/analytics/dashboard")
 }
 
 /**
  * Busca dados de engajamento dos pacientes
  */
-export async function getEngagementData(period: string = "weekly") {
+export async function getEngagementData(period: string = "weekly"): Promise<AxiosResponse<EngagementResponse>> {
   return await api.get("/nutricionista/dashboard/engagement", { params: { period } })
 }
 
 /**
  * Busca alertas inteligentes
  */
-export async function getIntelligentAlerts() {
+export async function getIntelligentAlerts(): Promise<AxiosResponse<AlertsResponse>> {
   return await api.get("/nutricionista/dashboard/alerts")
 }
 
 /**
  * Busca lista de pacientes (apenas para nutricionista)
  */
-export async function getPatients() {
+export async function getPatients(): Promise<AxiosResponse<PatientsResponse>> {
   return await api.get("/nutricionista/patients")
 }
 
 /**
  * Busca detalhes de um paciente
  */
-export async function getPatient(id: string) {
+export async function getPatient(id: string): Promise<AxiosResponse<PatientDetailsResponse>> {
   return await api.get(`/nutricionista/patients/${id}`)
 }
 
 /**
  * Cria plano alimentar para um paciente
  */
-export async function createMealPlanForPatient(patientId: string, plan: any) {
+export async function createMealPlanForPatient(patientId: string, plan: MealPlanResponse["data"]): Promise<AxiosResponse> {
   return await api.post(`/nutricionista/patients/${patientId}/meal-plan`, plan)
 }

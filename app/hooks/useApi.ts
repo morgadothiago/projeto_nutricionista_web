@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback, useRef } from "react"
 import { AxiosError } from "axios"
 
 interface UseApiState<T> {
@@ -9,6 +9,7 @@ interface UseApiState<T> {
 
 interface UseApiOptions {
   skip?: boolean
+  deps?: any[]
 }
 
 export function useApi<T>(
@@ -21,15 +22,34 @@ export function useApi<T>(
     error: null,
   })
 
-  const fetchData = async () => {
+  const abortControllerRef = useRef<AbortController | null>(null)
+
+  const fetchData = useCallback(async () => {
     if (options.skip) return
+
+    // Cancel previous request if exists
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort()
+    }
+
+    // Create new AbortController
+    abortControllerRef.current = new AbortController()
 
     setState({ data: null, loading: true, error: null })
 
     try {
       const response = await apiFunction()
-      setState({ data: response.data, loading: false, error: null })
+
+      // Only update state if not aborted
+      if (!abortControllerRef.current.signal.aborted) {
+        setState({ data: response.data, loading: false, error: null })
+      }
     } catch (err) {
+      // Don't update state if request was aborted
+      if (abortControllerRef.current.signal.aborted) {
+        return
+      }
+
       const error = err as AxiosError<{ message?: string }>
       const errorMessage =
         error.response?.data?.message ||
@@ -38,11 +58,18 @@ export function useApi<T>(
 
       setState({ data: null, loading: false, error: errorMessage })
     }
-  }
+  }, [apiFunction, options.skip])
 
   useEffect(() => {
     fetchData()
-  }, [])
+
+    // Cleanup: abort on unmount
+    return () => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort()
+      }
+    }
+  }, options.deps || [fetchData])
 
   return { ...state, refetch: fetchData }
 }

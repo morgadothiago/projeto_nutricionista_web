@@ -90,8 +90,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
       }
 
       if (result?.ok) {
-        // Login bem-sucedido - força reload completo para atualizar a sessão
-        window.location.reload()
+        // Login bem-sucedido - usa router.refresh() para atualizar a sessão sem reload
+        router.refresh()
       }
     } catch (error) {
       throw error
