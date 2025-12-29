@@ -69,14 +69,14 @@ export default function Home() {
 
   const handleAnamneseSubmit = async (data: AnamneseFormData) => {
     try {
-      await api.post("/", data)
+      await api.post("/webhook/zapnutri", data)
 
       toast.success("Anamnese enviada com sucesso!", {
         description: "Obrigado! Suas informações foram recebidas.",
         duration: 5000,
       })
 
-      await n8n.post("/", data)
+      await n8n.post("/webhook/zapnutri", data)
 
       setTimeout(() => {
         window.location.reload()
