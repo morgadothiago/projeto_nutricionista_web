@@ -24,6 +24,33 @@ export interface DailySummaryResponse {
   success: boolean
 }
 
+// Metas Nutricionais - Resumo Diário
+export interface NutritionalMetrics {
+  calorias: number
+  proteinas: number
+  carboidratos: number
+  gorduras: number
+  fibras: number
+  agua: number
+}
+
+export interface NutritionalExceeded {
+  calorias: boolean
+  proteinas: boolean
+  carboidratos: boolean
+  gorduras: boolean
+  fibras: boolean
+  agua: boolean
+}
+
+export interface NutritionalGoalsResponse {
+  date: string
+  totals: NutritionalMetrics
+  goals: NutritionalMetrics
+  remaining: NutritionalMetrics
+  exceeded: NutritionalExceeded
+}
+
 // Meals / Alimentos
 export interface Food {
   name: string

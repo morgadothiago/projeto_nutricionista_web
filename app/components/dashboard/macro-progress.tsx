@@ -5,6 +5,7 @@ interface MacroProgressProps {
   current: number
   target: number
   color?: string
+  unit?: string
 }
 
 export function MacroProgress({
@@ -12,6 +13,7 @@ export function MacroProgress({
   current,
   target,
   color = "bg-[#2DD49F]",
+  unit = "g",
 }: MacroProgressProps) {
   const percentage = Math.min((current / target) * 100, 100)
 
@@ -31,9 +33,9 @@ export function MacroProgress({
       </div>
       <div className="flex items-baseline gap-1.5">
         <span className="text-xl sm:text-2xl font-bold text-[#2E3A59]">
-          {current}g
+          {current}{unit}
         </span>
-        <span className="text-sm text-[#6B7280]">de {target}g</span>
+        <span className="text-sm text-[#6B7280]">de {target}{unit}</span>
       </div>
     </div>
   )

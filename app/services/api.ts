@@ -2,6 +2,7 @@ import { DoctorRegisterPayload, RegisterFormData } from "@/types"
 import type { AnamneseFormData } from "@/types/anamnese"
 import type {
   DailySummaryResponse,
+  NutritionalGoalsResponse,
   TipOfTheDayResponse,
   MealsResponse,
   CreateMealPayload,
@@ -107,8 +108,17 @@ export async function SubmitAnamnesePublic(data: AnamneseFormData) {
 /**
  * Busca resumo diário do paciente (calorias, macros)
  */
-export async function getDailySummary(pacientId: string): Promise<AxiosResponse<DailySummaryResponse>> {
-  return await api.get(`/metas-nutricionais/paciente/${pacientId}/resumo-diario`)
+export async function getDailySummary(pacientId: string, date?: string): Promise<AxiosResponse<DailySummaryResponse>> {
+  const params = date ? { data: date } : {}
+  return await api.get(`/metas-nutricionais/paciente/${pacientId}/resumo-diario`, { params })
+}
+
+/**
+ * Busca metas nutricionais detalhadas do paciente
+ */
+export async function getNutritionalGoals(pacientId: string, date?: string): Promise<AxiosResponse<NutritionalGoalsResponse>> {
+  const params = date ? { data: date } : {}
+  return await api.get(`/metas-nutricionais/paciente/${pacientId}/resumo-diario`, { params })
 }
 
 /**

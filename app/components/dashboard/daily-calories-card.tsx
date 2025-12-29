@@ -8,12 +8,16 @@ interface DailyCaloriesCardProps {
     protein: { current: number; target: number }
     fat: { current: number; target: number }
   }
+  fiber?: { current: number; target: number }
+  water?: { current: number; target: number }
 }
 
 export function DailyCaloriesCard({
   currentCalories,
   targetCalories,
   macros,
+  fiber,
+  water,
 }: DailyCaloriesCardProps) {
   const caloriesPercentage = Math.min(
     (currentCalories / targetCalories) * 100,
@@ -83,6 +87,38 @@ export function DailyCaloriesCard({
             />
           </div>
         </div>
+
+        {/* Fibras e Água */}
+        {(fiber || water) && (
+          <>
+            <div className="border-t border-gray-100" />
+            <div>
+              <h4 className="text-lg font-semibold text-[#2E3A59] mb-4">
+                Outros Nutrientes
+              </h4>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                {fiber && (
+                  <MacroProgress
+                    label="Fibras"
+                    current={fiber.current}
+                    target={fiber.target}
+                    color="bg-gradient-to-r from-[#2DD49F] to-[#1FB87D]"
+                    unit="g"
+                  />
+                )}
+                {water && (
+                  <MacroProgress
+                    label="Água"
+                    current={water.current}
+                    target={water.target}
+                    color="bg-gradient-to-r from-[#00A8E8] to-[#007EA7]"
+                    unit="L"
+                  />
+                )}
+              </div>
+            </div>
+          </>
+        )}
       </div>
     </div>
   )
