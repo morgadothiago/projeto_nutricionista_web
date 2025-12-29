@@ -76,7 +76,7 @@ export default function Home() {
         duration: 5000,
       })
 
-      await n8n.post("/nutricionista", data)
+      await n8n.post("/", data)
 
       setTimeout(() => {
         window.location.reload()
