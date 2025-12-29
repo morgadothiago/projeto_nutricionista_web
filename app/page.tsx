@@ -69,7 +69,7 @@ export default function Home() {
 
   const handleAnamneseSubmit = async (data: AnamneseFormData) => {
     try {
-      await api.post("/", data)
+      await api.post("/anamnesis", data)
 
       toast.success("Anamnese enviada com sucesso!", {
         description: "Obrigado! Suas informações foram recebidas.",
