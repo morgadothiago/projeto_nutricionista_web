@@ -190,15 +190,19 @@ export default function CadastroDoctorPage() {
     }
 
     try {
+      const payload = {
+        name: registerData.name,
+        email: registerData.email,
+        whatsappNumber: formatPhoneToInternational(registerData.phone),
+        password: registerData.password,
+        roles: ["nutricionista"],
+      }
+
+      console.log("Enviando cadastro de nutricionista:", payload)
+
       const response = await api.post(
         "/auth/register",
-        {
-          name: registerData.name,
-          email: registerData.email,
-          whatsappNumber: formatPhoneToInternational(registerData.phone),
-          password: registerData.password,
-          roles: ["nutricionista"],
-        },
+        payload,
         {
           headers: {
             "Content-Type": "application/json",
@@ -214,16 +218,38 @@ export default function CadastroDoctorPage() {
         router.push("/login")
       }, 2000)
     } catch (error: any) {
+      console.error("Erro completo:", error)
+      console.error("Resposta da API:", error.response?.data)
+
       let errorMessage = "Erro ao criar conta. Tente novamente mais tarde."
 
       // Captura mensagens de erro da API
       if (error.response) {
-        // Tenta extrair a mensagem de erro da resposta
-        errorMessage =
-          error.response.data?.message ||
-          error.response.data?.error ||
-          error.response.data?.errors?.[0]?.message ||
-          `Erro ${error.response.status}: ${error.response.statusText}`
+        const data = error.response.data
+        console.log("Status:", error.response.status)
+        console.log("Data:", data)
+
+        // Trata diferentes tipos de mensagens de erro
+        if (Array.isArray(data?.message)) {
+          errorMessage = data.message.join(", ")
+        } else if (data?.message) {
+          errorMessage = data.message
+        } else if (data?.error) {
+          errorMessage = data.error
+        } else {
+          errorMessage = `Erro ${error.response.status}: ${error.response.statusText}`
+        }
+
+        // Mensagens específicas para erros comuns
+        if (error.response.status === 500 && errorMessage.includes("duplicate key")) {
+          if (errorMessage.includes("email")) {
+            errorMessage = "Este email já está cadastrado. Tente fazer login ou use outro email."
+          } else if (errorMessage.includes("telefone") || errorMessage.includes("whatsapp")) {
+            errorMessage = "Este telefone já está cadastrado. Use outro número."
+          } else {
+            errorMessage = "Já existe um cadastro com esses dados."
+          }
+        }
       } else if (error.request) {
         errorMessage = "Não foi possível conectar ao servidor. Verifique sua conexão."
       } else {
@@ -234,6 +260,7 @@ export default function CadastroDoctorPage() {
 
       toast.error("Erro ao criar conta", {
         description: errorMessage,
+        duration: 5000,
       })
     } finally {
       setLoading(false)

@@ -169,16 +169,18 @@ export default function CadastroPage() {
       return
     }
 
-    setLoading(false)
-
     try {
-      const response = await api.post("/auth/register", {
+      const payload = {
         name: registerData.name,
         whatsappNumber: formatPhoneToInternational(registerData.whatsappNumber || phone),
         email: registerData.email,
         password: registerData.password,
         roles: ["paciente"],
-      })
+      }
+
+      console.log("Enviando cadastro de paciente:", payload)
+
+      const response = await api.post("/auth/register", payload)
 
       toast.success("Cadastro realizado com sucesso!", {
         description: "Você será redirecionado para o login.",
@@ -188,9 +190,47 @@ export default function CadastroPage() {
         router.push("/login")
       }, 2000)
     } catch (error: any) {
-      console.error("Erro ao registrar usuário:", error)
-      toast.error("Erro ao registrar usuário", {
-        description: "Por favor, tente novamente mais tarde.",
+      console.error("Erro completo:", error)
+      console.error("Resposta da API:", error.response?.data)
+
+      let errorMessage = "Erro ao criar conta. Tente novamente mais tarde."
+
+      // Captura mensagens de erro da API
+      if (error.response) {
+        const data = error.response.data
+        console.log("Status:", error.response.status)
+        console.log("Data:", data)
+
+        // Trata diferentes tipos de mensagens de erro
+        if (Array.isArray(data?.message)) {
+          errorMessage = data.message.join(", ")
+        } else if (data?.message) {
+          errorMessage = data.message
+        } else if (data?.error) {
+          errorMessage = data.error
+        } else {
+          errorMessage = `Erro ${error.response.status}: ${error.response.statusText}`
+        }
+
+        // Mensagens específicas para erros comuns
+        if (error.response.status === 500 && errorMessage.includes("duplicate key")) {
+          if (errorMessage.includes("email")) {
+            errorMessage = "Este email já está cadastrado. Tente fazer login ou use outro email."
+          } else if (errorMessage.includes("telefone") || errorMessage.includes("whatsapp")) {
+            errorMessage = "Este telefone já está cadastrado. Use outro número."
+          } else {
+            errorMessage = "Já existe um cadastro com esses dados."
+          }
+        }
+      } else if (error.request) {
+        errorMessage = "Não foi possível conectar ao servidor. Verifique sua conexão."
+      } else {
+        errorMessage = error.message || errorMessage
+      }
+
+      toast.error("Erro ao criar conta", {
+        description: errorMessage,
+        duration: 5000,
       })
     } finally {
       setLoading(false)
