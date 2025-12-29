@@ -32,16 +32,26 @@ import type {
 import Axios, { type AxiosResponse } from "axios"
 
 export const api = Axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || "https://back-st1k.onrender.com",
+  baseURL: process.env.NEXT_PUBLIC_API_URL || "https://api.zapnutre.com.br",
 })
 
-// Interceptor para adicionar token de autenticação
-api.interceptors.request.use((config) => {
-  // Verifica se está no browser antes de acessar localStorage
+// Interceptor para adicionar token de autenticação do NextAuth
+api.interceptors.request.use(async (config) => {
+  // Verifica se está no browser antes de acessar session
   if (typeof window !== "undefined") {
-    const token = localStorage.getItem("token")
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`
+    try {
+      // Importa getSession dinamicamente para evitar problemas de SSR
+      const { getSession } = await import("next-auth/react")
+      const session = await getSession()
+
+      // Usa o accessToken do backend se disponível, senão usa o ID do usuário
+      if (session?.user?.accessToken) {
+        config.headers.Authorization = `Bearer ${session.user.accessToken}`
+      } else if (session?.user?.id) {
+        config.headers.Authorization = `Bearer ${session.user.id}`
+      }
+    } catch (error) {
+      console.error("Error getting session in API interceptor:", error)
     }
   }
   return config

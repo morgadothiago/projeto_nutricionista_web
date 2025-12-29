@@ -54,18 +54,18 @@ export default function Home() {
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
 
-  // Redireciona se já estiver autenticado
-  useEffect(() => {
-    if (!isLoading && isAuthenticated && userRole) {
-      if (userRole === "nutricionista") {
-        router.push("/dashboard/nutricionista")
-      } else if (userRole === "paciente") {
-        router.push("/dashboard/pacients")
-      } else {
-        router.push("/dashboard")
-      }
-    }
-  }, [isLoading, isAuthenticated, userRole, router])
+  // Removido auto-redirect para permitir acesso à home mesmo quando logado
+  // useEffect(() => {
+  //   if (!isLoading && isAuthenticated && userRole) {
+  //     if (userRole === "nutricionista") {
+  //       router.push("/dashboard/nutricionista")
+  //     } else if (userRole === "paciente") {
+  //       router.push("/dashboard/paciente")
+  //     } else {
+  //       router.push("/dashboard")
+  //     }
+  //   }
+  // }, [isLoading, isAuthenticated, userRole, router])
 
   const handleAnamneseSubmit = async (data: AnamneseFormData) => {
     try {
@@ -168,16 +168,28 @@ export default function Home() {
               </div>
 
               <div className="hidden md:flex items-center space-x-3">
-                <Link href="/login">
-                  <Button variant="ghost" className="text-slate-700 font-medium hover:bg-slate-100 rounded-full px-6">
-                    Entrar
-                  </Button>
-                </Link>
-                <Link href="/cadastro">
-                  <Button className="bg-slate-900 hover:bg-slate-800 text-white rounded-full px-6 py-5 shadow-lg shadow-slate-900/20 transition-all hover:scale-105 font-medium">
-                    Começar Agora
-                  </Button>
-                </Link>
+                {isAuthenticated ? (
+                  <>
+                    <Link href={userRole === "nutricionista" ? "/dashboard/nutricionista" : "/dashboard/paciente"}>
+                      <Button className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-full px-6 py-5 shadow-lg shadow-emerald-600/20 transition-all hover:scale-105 font-medium">
+                        Ir para Dashboard
+                      </Button>
+                    </Link>
+                  </>
+                ) : (
+                  <>
+                    <Link href="/login">
+                      <Button variant="ghost" className="text-slate-700 font-medium hover:bg-slate-100 rounded-full px-6">
+                        Entrar
+                      </Button>
+                    </Link>
+                    <Link href="/cadastro">
+                      <Button className="bg-slate-900 hover:bg-slate-800 text-white rounded-full px-6 py-5 shadow-lg shadow-slate-900/20 transition-all hover:scale-105 font-medium">
+                        Começar Agora
+                      </Button>
+                    </Link>
+                  </>
+                )}
               </div>
 
               {/* Mobile Menu Button */}
@@ -200,10 +212,18 @@ export default function Home() {
             <div className="flex flex-col space-y-4">
               <Link href="#features" onClick={() => setMobileMenuOpen(false)} className="text-slate-600 font-medium p-2">Funcionalidades</Link>
               <Link href="#pricing" onClick={() => setMobileMenuOpen(false)} className="text-slate-600 font-medium p-2">Preços</Link>
-              <Link href="/login" onClick={() => setMobileMenuOpen(false)} className="text-slate-600 font-medium p-2">Entrar</Link>
-              <Link href="/cadastro" onClick={() => setMobileMenuOpen(false)}>
-                <Button className="w-full bg-emerald-600 text-white rounded-xl">Começar Agora</Button>
-              </Link>
+              {isAuthenticated ? (
+                <Link href={userRole === "nutricionista" ? "/dashboard/nutricionista" : "/dashboard/paciente"} onClick={() => setMobileMenuOpen(false)}>
+                  <Button className="w-full bg-emerald-600 text-white rounded-xl">Ir para Dashboard</Button>
+                </Link>
+              ) : (
+                <>
+                  <Link href="/login" onClick={() => setMobileMenuOpen(false)} className="text-slate-600 font-medium p-2">Entrar</Link>
+                  <Link href="/cadastro" onClick={() => setMobileMenuOpen(false)}>
+                    <Button className="w-full bg-emerald-600 text-white rounded-xl">Começar Agora</Button>
+                  </Link>
+                </>
+              )}
             </div>
           </motion.div>
         )}

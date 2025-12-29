@@ -38,10 +38,11 @@ export const authOptions: NextAuthOptions = {
             }
           )
 
-          const { user } = response.data
+          const { user, accessToken, token } = response.data
 
           if (user && user.id) {
             let role: UserRole = "paciente" // default
+            const validRoles: UserRole[] = ["paciente", "nutricionista"]
 
             // Tenta extrair a role de diferentes formatos
             if (user.roles) {
@@ -50,12 +51,20 @@ export const authOptions: NextAuthOptions = {
                 if (typeof user.roles === 'string') {
                   const rolesArray = JSON.parse(user.roles)
                   if (Array.isArray(rolesArray) && rolesArray.length > 0) {
-                    role = rolesArray[0] as UserRole
+                    const extractedRole = rolesArray[0] as UserRole
+                    // Valida se a role é válida
+                    if (validRoles.includes(extractedRole)) {
+                      role = extractedRole
+                    }
                   }
                 }
                 // Se roles já for um array
                 else if (Array.isArray(user.roles) && user.roles.length > 0) {
-                  role = user.roles[0] as UserRole
+                  const extractedRole = user.roles[0] as UserRole
+                  // Valida se a role é válida
+                  if (validRoles.includes(extractedRole)) {
+                    role = extractedRole
+                  }
                 }
               } catch (e) {
                 console.error("Error parsing roles:", e)
@@ -63,7 +72,7 @@ export const authOptions: NextAuthOptions = {
             }
 
             // Se houver um campo role direto (fallback)
-            if (user.role) {
+            if (user.role && validRoles.includes(user.role as UserRole)) {
               role = user.role as UserRole
             }
 
@@ -72,6 +81,7 @@ export const authOptions: NextAuthOptions = {
               email: user.email,
               name: user.name || user.email.split('@')[0],
               role: role,
+              token: accessToken || token, // Armazena o token JWT do backend (prioriza accessToken)
             }
           }
 
@@ -119,12 +129,13 @@ export const authOptions: NextAuthOptions = {
   ],
   callbacks: {
     async jwt({ token, user }) {
-      // Persist the user info in the token
+      // Persist the user info and JWT token in the token
       if (user) {
         token.id = user.id as string
         token.email = user.email as string
         token.name = user.name as string
         token.role = user.role
+        token.accessToken = user.token // Armazena o JWT do backend
       }
       return token
     },
@@ -135,6 +146,7 @@ export const authOptions: NextAuthOptions = {
         session.user.email = token.email as string
         session.user.name = token.name as string
         session.user.role = token.role
+        session.user.accessToken = token.accessToken as string // Disponibiliza o JWT para o cliente
       }
       return session
     },
