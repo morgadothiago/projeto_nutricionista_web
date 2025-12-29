@@ -10,6 +10,8 @@ import type {
   MealPlanResponse,
   SubstitutionsResponse,
   NutritionistNotesResponse,
+  PlansListResponse,
+  PlanDetailResponse,
   WeightEvolutionResponse,
   CaloriesEvolutionResponse,
   CheckinsResponse,
@@ -162,7 +164,7 @@ export async function deleteMeal(id: string): Promise<AxiosResponse> {
 // ==================== PLANO ALIMENTAR ====================
 
 /**
- * Busca plano alimentar do paciente
+ * Busca plano alimentar do paciente (deprecated - usar getPlans)
  */
 export async function getMealPlan(): Promise<AxiosResponse<MealPlanResponse>> {
   return await api.get("/meal-plan")
@@ -180,6 +182,22 @@ export async function getSubstitutions(): Promise<AxiosResponse<SubstitutionsRes
  */
 export async function getNutritionistNotes(): Promise<AxiosResponse<NutritionistNotesResponse>> {
   return await api.get("/meal-plan/notes")
+}
+
+// ==================== PLANS (NOVO) ====================
+
+/**
+ * Busca lista de planos disponíveis
+ */
+export async function getPlans(): Promise<AxiosResponse<PlansListResponse>> {
+  return await api.get("/plans")
+}
+
+/**
+ * Busca detalhes de um plano específico
+ */
+export async function getPlanById(id: string): Promise<AxiosResponse<PlanDetailResponse>> {
+  return await api.get(`/plans/${id}`)
 }
 
 // ==================== EVOLUÇÃO ====================

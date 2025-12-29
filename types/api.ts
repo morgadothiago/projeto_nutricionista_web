@@ -136,7 +136,7 @@ export interface CreateCheckinPayload {
   notes?: string
 }
 
-// Meal Plan
+// Meal Plan (deprecated - usar Plans)
 export interface MealPlanItem {
   time: string
   meal: string
@@ -172,6 +172,30 @@ export interface NutritionistNote {
 
 export interface NutritionistNotesResponse {
   data: NutritionistNote[]
+  success: boolean
+}
+
+// Plans (novo)
+export interface Plan {
+  id: string
+  name: string
+  description: string
+  audience: string
+  price: number
+  billingCycle: string
+  benefits: string[]
+  discountPercentage: number
+  createdAt: string
+  updatedAt: string
+}
+
+export interface PlansListResponse {
+  data: Plan[]
+  success: boolean
+}
+
+export interface PlanDetailResponse {
+  data: Plan
   success: boolean
 }
 
