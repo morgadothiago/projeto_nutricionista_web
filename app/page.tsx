@@ -69,7 +69,7 @@ export default function Home() {
 
   const handleAnamneseSubmit = async (data: AnamneseFormData) => {
     try {
-      await api.post("/webhook/zapnutri", data)
+      await api.post("/", data)
 
       toast.success("Anamnese enviada com sucesso!", {
         description: "Obrigado! Suas informações foram recebidas.",
